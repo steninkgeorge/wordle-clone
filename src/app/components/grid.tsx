@@ -79,7 +79,6 @@ export const Board = () => {
     const fmap = countFrequency(wordList[Index]);
     setFrequencyMap(fmap);
     const storedStats = localStorage.getItem("stats");
-    console.log(wordList[Index]);
     if (!storedStats) {
       localStorage.setItem("stats", JSON.stringify(stats));
     } else {
@@ -105,9 +104,10 @@ export const Board = () => {
           break;
 
         default:
-          if (currentGuess.length < 5) {
-            setCurrentGuess((prev) => prev + event.key);
-          }
+         if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(event.key)) {
+           setCurrentGuess((prev) => prev + event.key.toUpperCase()); // Force uppercase
+         }
+         break;
           break;
       }
     };
