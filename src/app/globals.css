@@ -1,26 +1,191 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer base {
+  :root {
+    /* Light mode variables */
+    --color-background: 255 255 255;   /* white */
+    --color-foreground: 23 23 23;      /* dark gray */
+    --color-correct: 106 170 100;      /* green for correct letter and position */
+    --color-present: 201 180 88;       /* yellow for correct letter, wrong position */
+    --color-absent: 120 124 126;       /* gray for incorrect letters */
+    --color-key-bg: 211 214 218;       /* keyboard key background */
+    --color-border: 211 214 218;       /* border color */
+    --color-navbar: 246 247 248;       /* navbar background */
+    
+    /* Apply Tailwind theme variables */
+    --background: rgb(var(--color-background));
+    --foreground: rgb(var(--color-foreground));
+  }
+  
+  .dark {
+    /* Dark mode variables */
+    --color-background: 18 18 19;      /* dark background */
+    --color-foreground: 255 255 255;   /* white text */
+    --color-correct: 83 141 78;        /* darker green for dark mode */
+    --color-present: 181 159 59;       /* darker yellow for dark mode */
+    --color-absent: 58 58 60;          /* darker gray for dark mode */
+    --color-key-bg: 129 131 132;       /* darker keyboard keys */
+    --color-border: 58 58 60;          /* darker border */
+    --color-navbar: 45 45 46;          /* darker navbar */
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+ /* Dark mode variables */
+    --color-background: 18 18 19;      /* dark background */
+    --color-foreground: 255 255 255;   /* white text */
+    --color-correct: 83 141 78;        /* darker green for dark mode */
+    --color-present: 181 159 59;       /* darker yellow for dark mode */
+    --color-absent: 58 58 60;          /* darker gray for dark mode */
+    --color-key-bg: 129 131 132;       /* darker keyboard keys */
+    --color-border: 58 58 60;          /* darker border */
+    --color-navbar: 45 45 46;          /* darker navbar */
   }
 }
+
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+
+@layer components{
+  .tile{
+      @apply w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center
+           text-2xl font-bold border-2 uppercase select-none;
+    border-color: rgb(177, 177, 177);
+    transform: scale(1);
+  transition: transform 0.1s ease-in-out, border-color 0.3s ease;
+  transform-style: preserve-3d;
+    perspective: 1000px;
+
+  }
+  .tile:not(.empty) {
+  animation: zoomPop 0.2s ease-in-out;
+}
+
+@keyframes zoomPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }}
+
+
+  /* New flip animation */
+  @keyframes flipAnimation {
+    0% {
+      transform: rotateX(0deg);
+            background: transparent;
+
+    }
+    49% {
+            background: transparent;
+
+    }
+     50% {
+      transform: rotateX(90deg);
+      background: transparent;
+      border-color: transparent;
+    }
+    55% {
+      background: var(--tile-color); /* Dynamically set */
+            border-color: transparent;
+
+
+    }
+    100% {
+      transform: rotateX(0deg);
+      background: var(--tile-color);
+      border-color: transparent;
+    }
+  }
+
+
+   /* Add flip class */
+  .tile.flip {
+    animation-name: flipAnimation;
+    animation-duration: 0.6s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  /* Add delay for each tile in a row */
+  .tile.flip-0 {
+    animation-delay: 0ms;
+  }
+  
+  .tile.flip-1 {
+    animation-delay: 200ms;
+  }
+  
+  .tile.flip-2 {
+    animation-delay: 400ms;
+  }
+  
+  .tile.flip-3 {
+    animation-delay: 600ms;
+  }
+  
+  .tile.flip-4 {
+    animation-delay: 800ms;
+  }
+
+
+   .tile.present {
+    --tile-color: rgb(var(--color-present));
+            border-color:transparent
+
+  }
+
+  .tile.incorrect {
+    --tile-color: rgb(var(--color-absent));
+        border-color:transparent
+
+  }
+
+  .tile.correct {
+        --tile-color: rgb(var(--color-correct));
+
+        border-color:transparent
+
+  }
+
+
+  
+  .line{
+    @apply flex justify-center items-center gap-x-2;
+  }
+
+  .board{
+    @apply flex flex-col gap-y-1 pt-10
+  }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-100%); opacity: 0; }
+}
+
+[data-sonner-toast] {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+[data-sonner-toast][data-closing="true"] {
+  animation: slideOut 0.3s ease-in forwards;
 }
