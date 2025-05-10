@@ -76,6 +76,7 @@ export const Board = () => {
   useEffect(() => {
     const Index = Math.floor(Math.random() * wordList.length);
     setWord(wordList[Index]);
+    console.log(wordList[Index])
     const fmap = countFrequency(wordList[Index]);
     setFrequencyMap(fmap);
     const storedStats = localStorage.getItem("stats");
@@ -105,7 +106,7 @@ export const Board = () => {
 
         default:
          if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(event.key)) {
-           setCurrentGuess((prev) => prev + event.key.toUpperCase()); // Force uppercase
+           setCurrentGuess((prev) => prev + event.key); // Force uppercase
          }
          break;
           break;
@@ -116,7 +117,7 @@ export const Board = () => {
     return () => {
       window.removeEventListener("keydown", handleType);
     };
-  }, [currentGuess, gameStatus, handleEnter]);
+  }, [currentGuess]);
 
   return (
     <div className="board">
@@ -146,10 +147,11 @@ function Line({
 }) {
   const tile = [];
   const localMap = new Map<string, number>(frequencyMap);
+      let state = "absent";
 
-  let state = "absent";
   let animate: undefined | "flip";
   for (let i = 0; i < 5; i++) {
+
     const char = guessItem[i];
 
     let isEmpty = false;
@@ -159,6 +161,7 @@ function Line({
     }
 
     if (char && isSubmitted) {
+
       if (localMap.has(char) && word[i] === char) {
         state = "correct";
         const current = localMap.get(char) || 0;
@@ -185,8 +188,8 @@ function Line({
     tile.push(
       <div
         key={i}
-        className={`tile ${isEmpty ? "empty" : null} ${state} ${animate} ${
-          animate ? `flip-${i}` : null
+        className={`tile ${isEmpty ? "empty" :''} ${state} ${animate} ${
+          animate ? `flip-${i}` : ''
         }`}
       >
         {char}
