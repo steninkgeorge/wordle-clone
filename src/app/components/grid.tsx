@@ -87,7 +87,7 @@ export const Board = () => {
       setStats(parsedStats);
       setCurrentLine(parsedStats.currentLine);
     }
-  }, [stats]);
+  }, []);
 
   useEffect(() => {
     if (gameStatus !== "playing") return;
