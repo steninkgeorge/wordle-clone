@@ -1,6 +1,6 @@
-// const defaultLayout = [
+const defaultLayout = [
 
-// ]
+]
 
 export const OnScreenKeyboard = ()=>{
     return (

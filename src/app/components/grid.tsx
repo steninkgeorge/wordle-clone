@@ -29,7 +29,7 @@ export const Grid = ({
             <Accordion type="multiple" className="w-full space-y-2">
               <AccordionItem
                 value="consonant"
-                className="border-0 rounded-lg overflow-hidden"
+                className="border-0 rounded-lg overflow-hidden "
               >
                 <AccordionTrigger className="px-4 hover:no-underline">
                   Show a consonant?

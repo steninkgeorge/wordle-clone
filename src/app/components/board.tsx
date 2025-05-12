@@ -8,7 +8,7 @@
 //TODO : add more games 
 
 import { useCallback, useEffect, useState } from "react";
-import { wordList } from "../constants/word-list";
+import { getTodaysWord } from "../constants/word-list";
 import { toast } from "sonner";
 import { Grid } from "./grid";
 
@@ -59,14 +59,15 @@ export const Board = () => {
   const [word, setWord] = useState("");
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
   const [stats, setStats] = useState(defaultStats);
-  const [gameStatus, setGameStatus] = useState<"playing" | "won" | "lost">(
+  const [gameStatus, setGameStatus] = useState<"playing" | "won" | "lost" | "paused">(
     "playing"
   );
   const [Hint , SetHint]=useState<HintProps>({vowel:undefined, consonant:undefined})
 
+
   const handleEnter = useCallback(
     (guess: string) => {
-      if (gameStatus !== "playing") return;
+      if (gameStatus !== "playing" && gameStatus!=='paused') return;
       const newGuess = [...guesses];
       newGuess[currentLine] = guess;
 
@@ -80,6 +81,7 @@ export const Board = () => {
           toast.success("You guessed it! 🎉", {
             className: "!bg-green-100 !text-green-800",
           });
+          
           const updatedStats = {
             ...stats,
             maxStreak: stats.maxStreak + 1,
@@ -92,6 +94,9 @@ export const Board = () => {
           const updatedStats = { ...stats, maxStreak: 0 };
           setStats(updatedStats);
           localStorage.setItem("stats", JSON.stringify(updatedStats));
+        }else{
+          setGameStatus('playing')
+          console.log('game status', gameStatus)
         }
       }, 1500);
     },
@@ -99,10 +104,9 @@ export const Board = () => {
   );
 
   useEffect(() => {
-    const Index = Math.floor(Math.random() * wordList.length);
-    setWord(wordList[Index]);
-    console.log(wordList[Index])
-    const {frequencyMap, hint } = countFrequency(wordList[Index], Hint);
+    const res = getTodaysWord();
+    setWord(res);
+    const {frequencyMap, hint } = countFrequency(res, Hint);
     setFrequencyMap(frequencyMap);
     SetHint(hint)
     const storedStats = localStorage.getItem("stats");
@@ -116,13 +120,14 @@ export const Board = () => {
   }, []);
 
   useEffect(() => {
-    if (gameStatus !== "playing") return;
+    if (gameStatus !== "playing" && gameStatus!=='paused') return;
 
     const handleType = (event: KeyboardEvent) => {
       switch (event.key) {
         case "Enter":
           if (currentGuess.length === 5) {
             handleEnter(currentGuess);
+            setGameStatus('paused')
           }
           break;
 
@@ -131,11 +136,10 @@ export const Board = () => {
           break;
 
         default:
-         if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(event.key)) {
+         if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(event.key) && gameStatus==='playing') {
            setCurrentGuess((prev) => prev + event.key);
          }
          break;
-          break;
       }
     };
     window.addEventListener("keydown", handleType);
@@ -143,7 +147,7 @@ export const Board = () => {
     return () => {
       window.removeEventListener("keydown", handleType);
     };
-  }, [currentGuess]);
+  }, [currentGuess, gameStatus]);
 
   return (
     <Grid guesses={guesses} Hint={Hint} word={word} currentLine={currentLine} currentGuess={currentGuess} frequencyMap={frequencyMap} />

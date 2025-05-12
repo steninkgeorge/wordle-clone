@@ -2298,7 +2298,6 @@ export const wordList = [
   "wrong",
   "wrote",
   "wrung",
-  "wryly",
   "yacht",
   "yearn",
   "yeast",
@@ -2309,3 +2308,20 @@ export const wordList = [
   "zesty",
   "zonal",
 ];
+
+
+
+export function getTodaysWord() {
+  // Get a consistent seed based on today's date
+  const today = new Date();
+  const seed =
+    today.getFullYear() * 10000 +
+    (today.getMonth() + 1) * 100 +
+    today.getDate();
+
+  // Use the seed to select a word from the array
+  const index = seed % wordList.length;
+  return wordList[index];
+}
+
+
