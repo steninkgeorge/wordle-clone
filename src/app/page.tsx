@@ -1,4 +1,4 @@
-import { Board } from "./components/grid";
+import { Board } from "./components/board";
 import { Navbar } from "./components/navbar";
 
 export default function Home() {
