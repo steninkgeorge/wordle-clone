@@ -30,19 +30,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark mode variables */
-    --color-background: 18 18 19; /* dark background */
-    --color-foreground: 255 255 255; /* white text */
-    --color-correct: 83 141 78; /* darker green for dark mode */
-    --color-present: 181 159 59; /* darker yellow for dark mode */
-    --color-absent: 58 58 60; /* darker gray for dark mode */
-    --color-key-bg: 129 131 132; /* darker keyboard keys */
-    --color-border: 58 58 60; /* darker border */
-    --color-navbar: 45 45 46; /* darker navbar */
-  }
-}
+
 
 body {
   background: var(--background);
