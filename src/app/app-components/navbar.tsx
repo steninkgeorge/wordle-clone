@@ -1,10 +1,13 @@
 'use client'
 
-import {  LightbulbIcon, MedalIcon, MenuIcon, MoonIcon, SettingsIcon, SunIcon } from "lucide-react"
+import {  HelpCircleIcon, LightbulbIcon, MedalIcon, MenuIcon, MoonIcon, SettingsIcon, SunIcon } from "lucide-react"
 import { useEffect, useState } from "react";
+import { useOnboardingState } from "../hooks/game-state";
 
 export const Navbar = () => {
     const [darkMode, setDarkMode] = useState(false);
+    const {  setOpen } = useOnboardingState();
+
     useEffect(() => {
       // Check system preference and local storage
       const isDark =
@@ -36,6 +39,7 @@ export const Navbar = () => {
             <MoonIcon className="w-8 h-8 cursor-pointer" />
           )}
         </button>
+        <HelpCircleIcon onClick={()=>setOpen(true)} className="w-8 h-8 cursor-pointer"/>
         <LightbulbIcon className="w-8 h-8 cursor-pointer" />
         <MedalIcon className="w-8 h-8 cursor-pointer" />
         <SettingsIcon className="w-8 h-8 cursor-pointer" />

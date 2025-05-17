@@ -91,3 +91,13 @@ export const useGameState = create<GameState>((set, get) => ({
     }
   },
 }));
+
+interface onboardingStateprops{
+  open: boolean, 
+  setOpen:(value: boolean)=>void
+}
+
+export const useOnboardingState = create<onboardingStateprops>((set)=>({
+open:true, 
+setOpen:(value)=>set({open:value})
+}))

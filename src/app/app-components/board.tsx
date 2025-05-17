@@ -18,6 +18,7 @@ import {  updatestats } from "@/lib/fetch-data";
 import { countFrequency, HintProps } from "@/lib/frequency-count";
 import { useGameState } from "../hooks/game-state";
 import { ShimmerGrid } from "./shimmer-grid";
+import { HowToPlay } from "./onboarding";
 
 
 export const Board = () => {
@@ -34,6 +35,8 @@ export const Board = () => {
   } = useGameState();
 
   const [word, setWord] = useState("");
+    const [showHowToPlay, setShowHowToPlay] = useState(true);
+
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
 
   const [Hint, SetHint] = useState<HintProps>({
@@ -124,13 +127,16 @@ export const Board = () => {
     return <ShimmerGrid />;
   }
   return (
-    <Grid
-      guesses={guesses}
-      Hint={Hint}
-      word={word}
-      currentLine={currentLine}
-      currentGuess={currentGuess}
-      frequencyMap={frequencyMap}
-    />
+    <div>
+      <HowToPlay   />
+      <Grid
+        guesses={guesses}
+        Hint={Hint}
+        word={word}
+        currentLine={currentLine}
+        currentGuess={currentGuess}
+        frequencyMap={frequencyMap}
+      />
+    </div>
   );
 };
