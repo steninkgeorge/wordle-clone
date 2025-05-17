@@ -1,0 +1,61 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+ enum GameStatus {
+  playing
+  won
+  lost
+  paused
+}
+
+model User {
+  id            String     @id @default(uuid())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  isGuest       Boolean    @default(true)
+  email         String?    @unique
+  username      String?    @unique
+  
+  // Relations
+  gameStats     GameStats?
+  dailyGuesses  DailyGuesses?
+}
+
+model GameStats {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  maxStreak     Int       @default(0)
+  currentStreak Int       @default(0)
+  lastPlayedDate DateTime?
+  hasPlayedToday Boolean  @default(false)
+  gamesPlayed   Int       @default(0)
+  gamesWon      Int       @default(0)
+  
+  // Relation
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DailyGuesses {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  date          DateTime  @default(now()) @db.Date
+  currentLine   Int       @default(0)
+  currentGuess  String   @default("")
+  guesses      String[]  @default(["", "", "", "", "", ""]) @db.Text
+  gameStatus   GameStatus @default(playing)
+  // Relation
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, date])
+}
+
+        
+

@@ -1,145 +1,116 @@
 "use client";
 
-//TODO : mobile device usage as well 
-//TODO : fetch user stats from server , or local storage for now
+//TODO : mobile device usage as well
+//immdediate TODO : fetch user stats from server , or local storage for now
 //TODO : provide hint
-//TODO : provide words per day
-//TODO : artificial coins , streaks and many more 
-//TODO : add more games 
+//TODO : artificial coins , streaks and many more
+//TODO : add more games
+
+//optimize
+//TODO: reset guesses table every 24 hours
+//TODO : migrate to realtime
 
 import { useCallback, useEffect, useState } from "react";
 import { getTodaysWord } from "../constants/word-list";
 import { toast } from "sonner";
 import { Grid } from "./grid";
+import {  updatestats } from "@/lib/fetch-data";
+import { countFrequency, HintProps } from "@/lib/frequency-count";
+import { useGameState } from "../hooks/game-state";
+import { ShimmerGrid } from "./shimmer-grid";
 
-
-interface Stats {
-  maxStreak: number;
-  currentLine: number;
-}
-
-interface HintProps{
-  consonant: string | undefined,
-  vowel : string | undefined
-}
-
-const defaultStats: Stats = {
-  maxStreak: 0,
-  currentLine: 0,
-};
-
-const vowels = ['a','e','i','o','u']
-
-function countFrequency(word: string, hint: HintProps) {
-  const frequencyMap: Map<string, number> = new Map();
-  const wordLower = word.toLowerCase()
-  
-  for (let i = 0; i < word.length; i++) {
-    const char = wordLower[i];
-    if (char === undefined) continue;
-    if(vowels.includes(char) && hint.vowel===undefined){
-      hint.vowel=char
-    }
-
-    if(!vowels.includes(char) && hint.consonant===undefined){
-      hint.consonant=char
-    }
-
-    const current = frequencyMap.get(char) || 0;
-    frequencyMap.set(char, current + 1);
-  }
-
-  return {frequencyMap, hint};
-}
 
 export const Board = () => {
-  const [guesses, setGuesses] = useState<string[]>(Array(6).fill(""));
-  const [currentGuess, setCurrentGuess] = useState("");
-  const [currentLine, setCurrentLine] = useState(0);
+  const {
+    userId,
+    guesses,
+    isInitialized,
+    makeGuess,
+    currentLine,
+    currentGuess,
+    setCurrentGuess,
+    gameStatus,
+    setGameStatus,
+  } = useGameState();
+
   const [word, setWord] = useState("");
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
-  const [stats, setStats] = useState(defaultStats);
-  const [gameStatus, setGameStatus] = useState<"playing" | "won" | "lost" | "paused">(
-    "playing"
-  );
-  const [Hint , SetHint]=useState<HintProps>({vowel:undefined, consonant:undefined})
 
+  const [Hint, SetHint] = useState<HintProps>({
+    vowel: undefined,
+    consonant: undefined,
+  });
 
   const handleEnter = useCallback(
-    (guess: string) => {
-      if (gameStatus !== "playing" && gameStatus!=='paused') return;
-      const newGuess = [...guesses];
-      newGuess[currentLine] = guess;
+    async (guess: string) => {
+      if (gameStatus !== "playing" && gameStatus !== "paused") return;
 
-      setGuesses(newGuess);
-      // Continue to next guess
-      setCurrentGuess("");
-      setCurrentLine((prev) => prev + 1);
+      makeGuess(guess);
+
       setTimeout(() => {
         if (guess === word) {
           setGameStatus("won");
           toast.success("You guessed it! 🎉", {
             className: "!bg-green-100 !text-green-800",
           });
-          
-          const updatedStats = {
-            ...stats,
-            maxStreak: stats.maxStreak + 1,
-          };
-          setStats(updatedStats);
-          localStorage.setItem("stats", JSON.stringify(updatedStats));
+          updatestats(userId!, true);
         } else if (currentLine + 1 >= 6) {
           setGameStatus("lost");
           toast.error(`Game Over! The word was: ${word.toUpperCase()}`);
-          const updatedStats = { ...stats, maxStreak: 0 };
-          setStats(updatedStats);
-          localStorage.setItem("stats", JSON.stringify(updatedStats));
-        }else{
-          setGameStatus('playing')
-          console.log('game status', gameStatus)
+          updatestats(userId!, false);
+        } else {
+          setGameStatus("playing");
         }
       }, 1500);
     },
-    [currentLine, word, guesses, gameStatus, stats]
+    [currentLine, word, guesses, gameStatus]
   );
 
   useEffect(() => {
+    if (gameStatus === "won" || gameStatus === "lost") {
+      toast.success(
+        "You have completed today's challenge come back tomorrow 😇",
+        {
+          className: "!bg-green-100 !text-green-800",
+          duration: 6000,
+        }
+      );
+      return;
+    }
     const res = getTodaysWord();
     setWord(res);
-    const {frequencyMap, hint } = countFrequency(res, Hint);
+    const { frequencyMap, hint } = countFrequency(res, Hint);
     setFrequencyMap(frequencyMap);
-    SetHint(hint)
-    const storedStats = localStorage.getItem("stats");
-    if (!storedStats) {
-      localStorage.setItem("stats", JSON.stringify(stats));
-    } else {
-      const parsedStats = JSON.parse(storedStats);
-      setStats(parsedStats);
-      setCurrentLine(parsedStats.currentLine);
-    }
-  }, []);
+    SetHint(hint);
+
+    //check if uuid exist in local storage
+  }, [isInitialized]);
 
   useEffect(() => {
-    if (gameStatus !== "playing" && gameStatus!=='paused') return;
+    if (gameStatus !== "playing" && gameStatus !== "paused") return;
 
     const handleType = (event: KeyboardEvent) => {
       switch (event.key) {
         case "Enter":
           if (currentGuess.length === 5) {
             handleEnter(currentGuess);
-            setGameStatus('paused')
+            setGameStatus("paused");
           }
           break;
 
         case "Backspace":
-          setCurrentGuess((prev) => prev.slice(0, -1));
+          setCurrentGuess(currentGuess.slice(0, -1));
           break;
 
         default:
-         if (currentGuess.length < 5 && /^[a-zA-Z]$/.test(event.key) && gameStatus==='playing') {
-           setCurrentGuess((prev) => prev + event.key);
-         }
-         break;
+          if (
+            currentGuess.length < 5 &&
+            /^[a-zA-Z]$/.test(event.key) &&
+            gameStatus === "playing"
+          ) {
+            setCurrentGuess(currentGuess + event.key);
+          }
+          break;
       }
     };
     window.addEventListener("keydown", handleType);
@@ -147,10 +118,19 @@ export const Board = () => {
     return () => {
       window.removeEventListener("keydown", handleType);
     };
-  }, [currentGuess, gameStatus]);
+  }, [currentGuess, gameStatus, currentLine]);
 
+  if (!isInitialized) {
+    return <ShimmerGrid />;
+  }
   return (
-    <Grid guesses={guesses} Hint={Hint} word={word} currentLine={currentLine} currentGuess={currentGuess} frequencyMap={frequencyMap} />
+    <Grid
+      guesses={guesses}
+      Hint={Hint}
+      word={word}
+      currentLine={currentLine}
+      currentGuess={currentGuess}
+      frequencyMap={frequencyMap}
+    />
   );
 };
-
