@@ -24,7 +24,7 @@ export interface BoardRef {
   scrollToHint: () => void;
 }
 
-export const Board =forwardRef<BoardRef, any>( (_,ref) => {
+export const Board =forwardRef<BoardRef>( (_,ref) => {
   const gridRef = useRef<GridRef>(null);
 
     useImperativeHandle(ref, () => ({
