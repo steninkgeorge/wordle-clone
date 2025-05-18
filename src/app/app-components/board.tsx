@@ -1,8 +1,6 @@
 "use client";
 
-//TODO : mobile device usage as well
-//immdediate TODO : fetch user stats from server , or local storage for now
-//TODO : provide hint
+//immediate : find and fix loopholes
 //TODO : artificial coins , streaks and many more
 //TODO : add more games
 

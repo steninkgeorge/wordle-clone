@@ -31,7 +31,10 @@ export const HowToPlay = () => {
       >
         <DialogHeader>
           <DialogTitle>How to Play</DialogTitle>
-          <DialogDescription>Guess the word in 6 tries</DialogDescription>
+          <DialogDescription>
+            Guess the <span className="font-bold">5-letter</span> word in{" "}
+            <span className="font-bold">6 tries 🤩</span>
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -40,6 +43,10 @@ export const HowToPlay = () => {
             <li>
               The color of the tiles will change to show how close your guess
               was
+            </li>
+            <li>
+              ⏎ Finally, press <span className="font-semibold">ENTER</span> to
+              check your guess! 🎉
             </li>
           </ul>
 
