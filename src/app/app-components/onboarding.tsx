@@ -8,11 +8,18 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useOnboardingState } from "../hooks/game-state";
+import { useEffect } from "react";
 
 export const HowToPlay = () => {
   const { open, setOpen } = useOnboardingState();
   const isDark = document.documentElement.classList.contains("dark");
 
+  useEffect(()=>{
+    const hasPlayed = localStorage.getItem('hasPlayed')
+    if(!hasPlayed){
+        localStorage.setItem('hasPlayed','1')
+    }
+  },[])
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent

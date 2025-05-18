@@ -35,7 +35,6 @@ export const Board = () => {
   } = useGameState();
 
   const [word, setWord] = useState("");
-
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
 
   const [Hint, SetHint] = useState<HintProps>({
