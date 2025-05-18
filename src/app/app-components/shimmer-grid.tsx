@@ -11,7 +11,7 @@ export const ShimmerGrid = () => {
             <div
               key={cellIndex}
               className={cn(
-                "h-16 w-16  rounded-md", // Increased height and rounding
+                "h-14 w-14  rounded-md", // Increased height and rounding
                 "bg-gradient-to-r from-neutral-300 via-neutral-300/70 to-neutral-300",
                 "animate-pulse border border-gray-300/40 bg-transparent",
                 "shadow-sm shadow-gray-400/30" // Added subtle shadow

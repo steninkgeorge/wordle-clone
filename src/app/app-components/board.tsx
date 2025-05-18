@@ -8,10 +8,10 @@
 //TODO: reset guesses table every 24 hours
 //TODO : migrate to realtime
 
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { getTodaysWord } from "../constants/word-list";
 import { toast } from "sonner";
-import { Grid } from "./grid";
+import { Grid, GridRef } from "./grid";
 import {  updatestats } from "@/lib/fetch-data";
 import { countFrequency, HintProps } from "@/lib/frequency-count";
 import { useGameState } from "../hooks/game-state";
@@ -19,7 +19,19 @@ import { ShimmerGrid } from "./shimmer-grid";
 import { HowToPlay } from "./onboarding";
 
 
-export const Board = () => {
+
+export interface BoardRef {
+  scrollToHint: () => void;
+}
+
+export const Board =forwardRef<BoardRef, any>( (_,ref) => {
+  const gridRef = useRef<GridRef>(null);
+
+    useImperativeHandle(ref, () => ({
+      scrollToHint: () => {
+        gridRef.current?.scrollToHint();
+      },
+    }));
   const {
     userId,
     guesses,
@@ -39,6 +51,8 @@ export const Board = () => {
     vowel: undefined,
     consonant: undefined,
   });
+
+
 
   const handleEnter = useCallback(
     async (guess: string) => {
@@ -124,8 +138,9 @@ export const Board = () => {
   }
   return (
     <div>
-      <HowToPlay   />
+      <HowToPlay />
       <Grid
+      ref={gridRef}
         guesses={guesses}
         Hint={Hint}
         word={word}
@@ -135,4 +150,6 @@ export const Board = () => {
       />
     </div>
   );
-};
+})
+
+Board.displayName = "Board";

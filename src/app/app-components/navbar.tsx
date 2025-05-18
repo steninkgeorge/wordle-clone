@@ -4,7 +4,12 @@ import {  HelpCircleIcon, LightbulbIcon, MedalIcon, MenuIcon, MoonIcon, Settings
 import { useEffect, useState } from "react";
 import { useOnboardingState } from "../hooks/game-state";
 
-export const Navbar = () => {
+interface NavbarProps {
+  scrollToHint?: () => void;
+}
+
+
+export const Navbar = ({scrollToHint}:NavbarProps) => {
     const [darkMode, setDarkMode] = useState(false);
     const {  setOpen } = useOnboardingState();
 
@@ -27,10 +32,8 @@ export const Navbar = () => {
 
 
   return (
-    <div className="flex justify-around items-center pt-2 border-b border-neutral-300 dark:border-neutral-600 pb-4">
-      <div>
-        <MenuIcon className="w-8 h-8 cursor-pointer" />
-      </div>
+    <div className="flex justify-around items-center pt-2  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md">
+
       <div className="flex gap-x-8">
         <button onClick={toggleTheme} className="focus:outline-none">
           {darkMode ? (
@@ -40,9 +43,7 @@ export const Navbar = () => {
           )}
         </button>
         <HelpCircleIcon onClick={()=>setOpen(true)} className="w-8 h-8 cursor-pointer"/>
-        <LightbulbIcon className="w-8 h-8 cursor-pointer" />
-        <MedalIcon className="w-8 h-8 cursor-pointer" />
-        <SettingsIcon className="w-8 h-8 cursor-pointer" />
+<LightbulbIcon onClick={scrollToHint} className="w-8 h-8 cursor-pointer"/>
       </div>
     </div>
   );
