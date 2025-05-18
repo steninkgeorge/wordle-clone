@@ -11,7 +11,7 @@ export default function Home() {
   };
   return (
     <div>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col md:h-screen md:overflow-hidden min-h-screen">
         <Navbar scrollToHint={scrollToHint} />
 
         <div className="flex flex-grow item-center justify-center p-2 ">
