@@ -11,7 +11,6 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { getTodaysWord } from "../constants/word-list";
-import { toast } from "sonner";
 import { Grid, GridRef } from "./grid";
 import {  updatestats } from "@/lib/fetch-data";
 import { countFrequency, HintProps } from "@/lib/frequency-count";
@@ -19,6 +18,7 @@ import { useGameState } from "../hooks/game-state";
 import { ShimmerGrid } from "./shimmer-grid";
 import { HowToPlay } from "./onboarding";
 import { useKeyboardState } from "../hooks/keyboard-state";
+import { toast } from "sonner";
 
 
 
@@ -68,7 +68,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
         if (guess === word) {
           setGameStatus("won");
           toast.success("You guessed it! 🎉", {
-            className: "!bg-green-100 !text-green-800",
+            className: "!text-green-800",
           });
           updatestats(userId!, true);
         } else if (currentLine + 1 >= 6) {
@@ -88,7 +88,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
       toast.success(
         "You have completed today's challenge come back tomorrow 😇",
         {
-          className: "!bg-green-100 !text-green-800",
+          className: " !text-green-800",
           duration: 6000,
         }
       );
