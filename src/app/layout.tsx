@@ -32,10 +32,15 @@ export default function RootLayout({
         {children}
         <Toaster
           position="top-center"
+          richColors
+          closeButton
           toastOptions={{
             className:
-              "!bg-white !text-black !shadow-lg !rounded-md !p-3 !max-w-xs",
+              "!bg-white !text-black !shadow-lg !rounded-md !p-3 !max-w-xs ",
             duration: 3000, // Auto-close after 3 seconds
+            style: {
+              zIndex: 9999,
+            },
           }}
         />
       </body>
