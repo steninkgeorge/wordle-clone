@@ -1,7 +1,9 @@
+import { toast } from "sonner";
 import { getTodaysWord } from "../constants/word-list";
 import { useGameState } from "../hooks/game-state";
 import { useKeyboardState } from "../hooks/keyboard-state";
 import { DeleteIcon } from "lucide-react";
+import { updatestats } from "@/lib/fetch-data";
 
 const KEYBOARD_LAYOUT = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -14,7 +16,7 @@ export const OnScreenKeyboard = () => {
     currentGuess,
     setCurrentGuess,
     gameStatus,
-    makeGuess,
+    makeGuess,setGameStatus,currentLine,userId
   } = useGameState();
 
   const word = getTodaysWord();
@@ -28,8 +30,22 @@ export const OnScreenKeyboard = () => {
     if (key === "Enter") {
       if (currentGuess.length === 5) {
         makeGuess(currentGuess);
-                updateKeyState(currentGuess, word);
-
+        updateKeyState(currentGuess, word);
+ setTimeout(() => {
+   if (currentGuess === word) {
+     setGameStatus("won");
+     toast.success("You guessed it! 🎉", {
+       className: "!text-green-800",
+     });
+     updatestats(userId!, true);
+   } else if (currentLine + 1 >= 6) {
+     setGameStatus("lost");
+     toast.error(`Game Over! The word was: ${word.toUpperCase()}`);
+     updatestats(userId!, false);
+   } else {
+     setGameStatus("playing");
+   }
+ }, 1500);
       }
     } else if (key === "Backspace") {
       setCurrentGuess(currentGuess.slice(0, -1));
