@@ -8,13 +8,12 @@ interface KeyboardStateProps {
   resetKey: () => void;
 }
 
-export const useKeyboardState = create<KeyboardStateProps>((set, get) => ({
+export const useKeyboardState = create<KeyboardStateProps>((set) => ({
   correct: "",
   present: "",
   absent: "",
 
   updateKeyState: (guess, word) => {
-    const state = get();
 
     const targetLetters = word.split("");
     const guessLetters = guess.split("");

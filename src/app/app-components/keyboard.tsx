@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { getTodaysWord } from "../constants/word-list";
 import { useGameState } from "../hooks/game-state";
 import { useKeyboardState } from "../hooks/keyboard-state";
@@ -11,16 +10,15 @@ const KEYBOARD_LAYOUT = [
 ];
 
 export const OnScreenKeyboard = () => {
-  const {guesses,
+  const {
     currentGuess,
     setCurrentGuess,
-    currentLine,
     gameStatus,
     makeGuess,
   } = useGameState();
 
   const word = getTodaysWord();
-  const { correct, present, absent,updateKeyState, resetKey } =
+  const { correct, present, absent,updateKeyState } =
     useKeyboardState();
 
  

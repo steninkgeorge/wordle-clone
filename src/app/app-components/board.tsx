@@ -35,7 +35,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
       },
     }));
 
-    const {updateKeyState, correct,absent}=useKeyboardState()
+    const {updateKeyState}=useKeyboardState()
   const {
     userId,
     guesses,
