@@ -1,6 +1,6 @@
 'use client'
 
-import {  HelpCircleIcon, LightbulbIcon, MoonIcon, Settings, SettingsIcon, SunIcon } from "lucide-react"
+import {  HelpCircleIcon, LightbulbIcon, MoonIcon, SettingsIcon, SunIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useOnboardingState } from "../hooks/game-state";
 import { toast } from "sonner";
