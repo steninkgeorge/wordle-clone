@@ -32,7 +32,7 @@ export const Navbar = ({scrollToHint}:NavbarProps) => {
 
 
   return (
-    <div className="flex justify-around items-center pt-2  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md">
+    <div className="flex justify-around items-center pt-4  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md ">
 
       <div className="flex gap-x-8">
         <button onClick={toggleTheme} className="focus:outline-none">

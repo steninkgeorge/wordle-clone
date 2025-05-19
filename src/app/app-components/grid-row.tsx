@@ -1,3 +1,4 @@
+
 export function Line({
   guessItem,
   word,
@@ -9,6 +10,7 @@ export function Line({
   word: string;
   frequencyMap: Map<string, number>;
 }) {
+
   const tile = [];
   const localMap = new Map<string, number>(frequencyMap);
   let state = "absent";
@@ -26,6 +28,7 @@ export function Line({
     if (char && isSubmitted) {
       if (localMap.has(char) && word[i] === char) {
         state = "correct";
+
         const current = localMap.get(char) || 0;
         if (current <= 1) {
           localMap.delete(char);
@@ -34,6 +37,7 @@ export function Line({
         }
       } else if (localMap.has(char)) {
         state = "present";
+
         const current = localMap.get(char) || 0;
         if (current <= 1) {
           localMap.delete(char);
@@ -42,6 +46,7 @@ export function Line({
         }
       } else {
         state = "incorrect";
+
       }
 
       animate = "flip";

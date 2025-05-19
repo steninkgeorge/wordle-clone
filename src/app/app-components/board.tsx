@@ -1,6 +1,7 @@
 "use client";
 
 //immediate : find and fix loopholes
+//TODO: toast not showing in chrome
 //TODO : artificial coins , streaks and many more
 //TODO : add more games
 
@@ -17,6 +18,7 @@ import { countFrequency, HintProps } from "@/lib/frequency-count";
 import { useGameState } from "../hooks/game-state";
 import { ShimmerGrid } from "./shimmer-grid";
 import { HowToPlay } from "./onboarding";
+import { useKeyboardState } from "../hooks/keyboard-state";
 
 
 
@@ -32,6 +34,8 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
         gridRef.current?.scrollToHint();
       },
     }));
+
+    const {updateKeyState, correct,absent}=useKeyboardState()
   const {
     userId,
     guesses,
@@ -59,7 +63,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
       if (gameStatus !== "playing" && gameStatus !== "paused") return;
 
       makeGuess(guess);
-
+      updateKeyState(guess , word)
       setTimeout(() => {
         if (guess === word) {
           setGameStatus("won");
@@ -95,6 +99,13 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
     const { frequencyMap, hint } = countFrequency(res, Hint);
     setFrequencyMap(frequencyMap);
     SetHint(hint);
+        if (guesses && res) {
+          guesses.slice(0, currentLine).forEach((guess) => {
+            if (guess) {
+              updateKeyState(guess, res);
+            }
+          });
+        }
 
     //check if uuid exist in local storage
   }, [isInitialized]);

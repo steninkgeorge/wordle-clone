@@ -11,31 +11,33 @@ const KEYBOARD_LAYOUT = [
 ];
 
 export const OnScreenKeyboard = () => {
-  const {
+  const {guesses,
     currentGuess,
     setCurrentGuess,
+    currentLine,
     gameStatus,
     makeGuess,
   } = useGameState();
 
   const word = getTodaysWord();
-  const { correct, present, absent, updateKeyState, resetKey } =
+  const { correct, present, absent,updateKeyState, resetKey } =
     useKeyboardState();
 
+ 
   const handleKeyClick = (key: string) => {
     if (gameStatus !== "playing") return;
 
     if (key === "Enter") {
       if (currentGuess.length === 5) {
         makeGuess(currentGuess);
-        updateKeyState(currentGuess, word);
+                updateKeyState(currentGuess, word);
+
       }
     } else if (key === "Backspace") {
       setCurrentGuess(currentGuess.slice(0, -1));
     } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key)) {
       setCurrentGuess(currentGuess + key.toLowerCase());
     }
-    console.log(key);
   };
 
   const getKeyStatus = (key: string) => {
@@ -45,9 +47,7 @@ export const OnScreenKeyboard = () => {
     return "unused";
   };
 
-  useEffect(() => {
-    resetKey();
-  }, [word]);
+
 
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-lg mx-auto mt-8 px-2 ">

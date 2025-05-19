@@ -20,8 +20,7 @@ export async function getUserStats(userId: string) {
 
     return user;
   } catch (error) {
-    console.error("Error fetching user data:", error);
-    throw error;
+    throw new Error(`${error}`);
   }
 }
 
@@ -32,8 +31,7 @@ export async function getGuessData(userId: string) {
     });
     return guess;
   } catch (error) {
-    console.error("Error fetching guess data:", error);
-    throw error;
+    throw new Error(`${error}`);
   }
 }
 

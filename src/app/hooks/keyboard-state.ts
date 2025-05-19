@@ -1,18 +1,21 @@
 import { create } from "zustand";
 
-interface KeyboardStateProps{
-    correct: string ; 
-    present: string;
-    absent: string ;
-    updateKeyState : (guess : string , word: string)=>void;
-    resetKey:()=>void;
+interface KeyboardStateProps {
+  correct: string;
+  present: string;
+  absent: string;
+  updateKeyState: (guess: string, word: string) => void;
+  resetKey: () => void;
 }
 
-export const useKeyboardState = create<KeyboardStateProps>((set) => ({
+export const useKeyboardState = create<KeyboardStateProps>((set, get) => ({
   correct: "",
   present: "",
   absent: "",
+
   updateKeyState: (guess, word) => {
+    const state = get();
+
     const targetLetters = word.split("");
     const guessLetters = guess.split("");
     const newCorrect = new Set<string>();
@@ -58,10 +61,11 @@ export const useKeyboardState = create<KeyboardStateProps>((set) => ({
       absent: Array.from(new Set([...state.absent, ...newAbsent])).join(""),
     }));
   },
-  resetKey: () =>
+  resetKey: () => {
     set({
       correct: "",
       present: "",
       absent: "",
-    }),
+    });
+  },
 }));

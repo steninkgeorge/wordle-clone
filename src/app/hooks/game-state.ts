@@ -67,7 +67,7 @@ export const useGameState = create<GameState>((set, get) => ({
         set({ userId: newUser.id });
       }
     } catch (error) {
-      console.error("Error initializing user:", error);
+      throw new Error(`${error}`)
     }finally{
         set({isInitialized:true})
     }
@@ -87,7 +87,7 @@ export const useGameState = create<GameState>((set, get) => ({
         })
       }
     } catch (error) {
-      console.error("Error loading game data:", error);
+      throw new Error(`${error}`)
     }
   },
 }));
