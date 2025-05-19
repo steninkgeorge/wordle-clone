@@ -1,6 +1,6 @@
 'use client'
 
-import {  HelpCircleIcon, LightbulbIcon, MoonIcon, SettingsIcon, SunIcon } from "lucide-react"
+import {  HelpCircleIcon, LightbulbIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useOnboardingState } from "../hooks/game-state";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ export const Navbar = ({scrollToHint}:NavbarProps) => {
 
 
   return (
-    <div className="flex justify-around items-center pt-4  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md ">
+    <div className="flex justify-around items-center pt-6  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md ">
 
       <div className="flex gap-x-8">
         <button onClick={toggleTheme} className="focus:outline-none">
@@ -45,7 +45,6 @@ export const Navbar = ({scrollToHint}:NavbarProps) => {
         </button>
         <HelpCircleIcon onClick={()=>setOpen(true)} className="w-8 h-8 cursor-pointer"/>
 <LightbulbIcon onClick={scrollToHint} className="w-8 h-8 cursor-pointer"/>
-<SettingsIcon onClick={()=>toast.success('heyy')}/>
       </div>
     </div>
   );
