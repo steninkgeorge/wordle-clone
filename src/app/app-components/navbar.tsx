@@ -3,7 +3,6 @@
 import {  HelpCircleIcon, LightbulbIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useOnboardingState } from "../hooks/game-state";
-import { toast } from "sonner";
 
 interface NavbarProps {
   scrollToHint?: () => void;
