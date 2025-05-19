@@ -1,8 +1,9 @@
 'use client'
 
-import {  HelpCircleIcon, LightbulbIcon, MoonIcon, SunIcon } from "lucide-react"
+import {  HelpCircleIcon, LightbulbIcon, MoonIcon, Settings, SettingsIcon, SunIcon } from "lucide-react"
 import { useEffect, useState } from "react";
 import { useOnboardingState } from "../hooks/game-state";
+import { toast } from "sonner";
 
 interface NavbarProps {
   scrollToHint?: () => void;
@@ -44,6 +45,7 @@ export const Navbar = ({scrollToHint}:NavbarProps) => {
         </button>
         <HelpCircleIcon onClick={()=>setOpen(true)} className="w-8 h-8 cursor-pointer"/>
 <LightbulbIcon onClick={scrollToHint} className="w-8 h-8 cursor-pointer"/>
+<SettingsIcon onClick={()=>toast.success('heyy')}/>
       </div>
     </div>
   );

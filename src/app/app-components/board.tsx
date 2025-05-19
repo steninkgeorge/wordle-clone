@@ -18,8 +18,7 @@ import { useGameState } from "../hooks/game-state";
 import { ShimmerGrid } from "./shimmer-grid";
 import { HowToPlay } from "./onboarding";
 import { useKeyboardState } from "../hooks/keyboard-state";
-import { toast } from "react-hot-toast";
-
+import { toast } from "sonner";
 
 
 export interface BoardRef {
