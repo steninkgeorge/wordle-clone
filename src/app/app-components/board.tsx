@@ -1,40 +1,43 @@
 "use client";
 
-//immediate : find and fix loopholes
-//TODO: toast not showing in chrome
-//TODO : artificial coins , streaks and many more
-//TODO : add more games
-
-//optimize
-//TODO: reset guesses table every 24 hours
-//TODO : migrate to realtime
-
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { getTodaysWord } from "../constants/word-list";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import {
+  endingMessage,
+  getFailMessage,
+  getToast,
+  getTodaysWord,
+} from "../constants/word-list";
 import { Grid, GridRef } from "./grid";
-import {  updatestats } from "@/lib/fetch-data";
+import { updatestats } from "@/lib/fetch-data";
 import { countFrequency, HintProps } from "@/lib/frequency-count";
 import { useGameState } from "../hooks/game-state";
 import { ShimmerGrid } from "./shimmer-grid";
 import { HowToPlay } from "./onboarding";
 import { useKeyboardState } from "../hooks/keyboard-state";
 import { toast } from "sonner";
-
+import { useGameStats } from "../hooks/gameStats";
 
 export interface BoardRef {
   scrollToHint: () => void;
 }
 
-export const Board =forwardRef<BoardRef>( (_,ref) => {
+export const Board = forwardRef<BoardRef>((_, ref) => {
   const gridRef = useRef<GridRef>(null);
 
-    useImperativeHandle(ref, () => ({
-      scrollToHint: () => {
-        gridRef.current?.scrollToHint();
-      },
-    }));
+  useImperativeHandle(ref, () => ({
+    scrollToHint: () => {
+      gridRef.current?.scrollToHint();
+    },
+  }));
 
-    const {updateKeyState}=useKeyboardState()
+  const { updateKeyState } = useKeyboardState();
   const {
     userId,
     guesses,
@@ -47,6 +50,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
     setGameStatus,
   } = useGameState();
 
+  const stats = useGameStats();
   const [word, setWord] = useState("");
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
 
@@ -55,25 +59,59 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
     consonant: undefined,
   });
 
-
+  const styledWord = `The word was "<span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-bold">${word.toUpperCase()}</span>`;
 
   const handleEnter = useCallback(
     async (guess: string) => {
       if (gameStatus !== "playing" && gameStatus !== "paused") return;
-
+      console.log("handle enter");
       makeGuess(guess);
-      updateKeyState(guess , word)
+      updateKeyState(guess, word);
+      const message = getToast(currentLine);
+      const failmessage = getFailMessage();
       setTimeout(() => {
         if (guess === word) {
           setGameStatus("won");
-          toast.success("You guessed it! 🎉", {
-            className: "!text-green-800",
+
+          toast.success(`You've guessed it right!🎉`, {
+            description: (
+              <span>
+                <span className="bg-gradient-to-r from-green-500 to-cyan-600 bg-clip-text text-transparent font-medium text-[14px] italic">
+                  {message.replace(
+                    /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu,
+                    ""
+                  )}
+                </span>
+                <span>
+                  {message
+                    .match(
+                      /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
+                    )
+                    ?.join(" ")}
+                </span>
+              </span>
+            ),
+            className: "!text-green-800 !bg-green-50",
+            duration: 8000,
           });
           updatestats(userId!, true);
+          stats.updateGameStat();
         } else if (currentLine + 1 >= 6) {
           setGameStatus("lost");
-          toast.error(`Game Over! The word was: ${word.toUpperCase()}`);
+          toast.error(failmessage, {
+            description: (
+              <span
+                className="italic"
+                dangerouslySetInnerHTML={{ __html: styledWord }}
+              />
+            ),
+            className:
+              "!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md",
+            duration: 8000,
+            icon: false,
+          });
           updatestats(userId!, false);
+          stats.updateGameStat();
         } else {
           setGameStatus("playing");
         }
@@ -84,13 +122,18 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
 
   useEffect(() => {
     if (gameStatus === "won" || gameStatus === "lost") {
-      toast.success(
-        "You have completed today's challenge come back tomorrow 😇",
-        {
-          className: " !text-green-800",
-          duration: 6000,
-        }
-      );
+      toast.success(``, {
+        description: (
+          <span>
+            <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent font-medium text-[14px]">
+              {endingMessage}
+            </span>{" "}
+            😇
+          </span>
+        ),
+        className: "!text-green-800 !bg-green-50",
+      });
+
       return;
     }
     const res = getTodaysWord();
@@ -98,13 +141,13 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
     const { frequencyMap, hint } = countFrequency(res, Hint);
     setFrequencyMap(frequencyMap);
     SetHint(hint);
-        if (guesses && res) {
-          guesses.slice(0, currentLine).forEach((guess) => {
-            if (guess) {
-              updateKeyState(guess, res);
-            }
-          });
+    if (guesses && res) {
+      guesses.slice(0, currentLine).forEach((guess) => {
+        if (guess) {
+          updateKeyState(guess, res);
         }
+      });
+    }
 
     //check if uuid exist in local storage
   }, [isInitialized]);
@@ -150,7 +193,7 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
     <div>
       <HowToPlay />
       <Grid
-      ref={gridRef}
+        ref={gridRef}
         guesses={guesses}
         Hint={Hint}
         word={word}
@@ -160,6 +203,6 @@ export const Board =forwardRef<BoardRef>( (_,ref) => {
       />
     </div>
   );
-})
+});
 
 Board.displayName = "Board";

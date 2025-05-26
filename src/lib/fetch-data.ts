@@ -11,14 +11,11 @@ import prismadb from "../../lib/prismadb";
 
 export async function getUserStats(userId: string) {
   try {
-    const user = await prismadb.user.findUnique({
-      where: { id: userId },
-      include: {
-        dailyGuesses: true,
-      },
+    const stats = await prismadb.gameStats.findUnique({
+      where: { userId: userId },
     });
 
-    return user;
+    return stats;
   } catch (error) {
     throw new Error(`${error}`);
   }
@@ -41,8 +38,8 @@ export const CreateUser = async () => {
 };
 
 export const getStats = async (userId: string) => {
-  const user = await getUserStats(userId);
-  return user;
+  const stats = await getUserStats(userId);
+  return stats;
 };
 
 export const getGameData = async (userId: string) => {

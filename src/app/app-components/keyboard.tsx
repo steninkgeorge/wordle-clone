@@ -1,9 +1,14 @@
 import { toast } from "sonner";
-import { getTodaysWord } from "../constants/word-list";
+import {
+  getFailMessage,
+  getToast,
+  getTodaysWord,
+} from "../constants/word-list";
 import { useGameState } from "../hooks/game-state";
 import { useKeyboardState } from "../hooks/keyboard-state";
 import { DeleteIcon } from "lucide-react";
 import { updatestats } from "@/lib/fetch-data";
+import { useGameStats } from "../hooks/gameStats";
 
 const KEYBOARD_LAYOUT = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -16,14 +21,18 @@ export const OnScreenKeyboard = () => {
     currentGuess,
     setCurrentGuess,
     gameStatus,
-    makeGuess,setGameStatus,currentLine,userId
+    makeGuess,
+    setGameStatus,
+    currentLine,
+    userId,
   } = useGameState();
 
   const word = getTodaysWord();
-  const { correct, present, absent,updateKeyState } =
-    useKeyboardState();
+  const stats = useGameStats();
 
- 
+  const { correct, present, absent, updateKeyState } = useKeyboardState();
+  const styledWord = `The word was "<span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-bold">${word.toUpperCase()}</span>`;
+
   const handleKeyClick = (key: string) => {
     if (gameStatus !== "playing") return;
 
@@ -31,21 +40,54 @@ export const OnScreenKeyboard = () => {
       if (currentGuess.length === 5) {
         makeGuess(currentGuess);
         updateKeyState(currentGuess, word);
- setTimeout(() => {
-   if (currentGuess === word) {
-     setGameStatus("won");
-     toast.success("You guessed it! 🎉", {
-       className: "!text-green-800",
-     });
-     updatestats(userId!, true);
-   } else if (currentLine + 1 >= 6) {
-     setGameStatus("lost");
-     toast.error(`Game Over! The word was: ${word.toUpperCase()}`);
-     updatestats(userId!, false);
-   } else {
-     setGameStatus("playing");
-   }
- }, 1500);
+        const message = getToast(currentLine);
+        const failmessage = getFailMessage();
+        setTimeout(() => {
+          if (currentGuess === word) {
+            setGameStatus("won");
+            toast.success(`You've guessed it right!🎉`, {
+              description: (
+                <span>
+                  <span className="bg-gradient-to-r from-green-500 to-cyan-600 bg-clip-text text-transparent font-medium text-[14px] italic">
+                    {message.replace(
+                      /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu,
+                      ""
+                    )}
+                  </span>
+                  <span>
+                    {message
+                      .match(
+                        /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
+                      )
+                      ?.join(" ")}
+                  </span>
+                </span>
+              ),
+              className: "!text-green-800 !bg-green-50",
+              duration: 8000,
+            });
+            updatestats(userId!, true);
+            stats.updateGameStat();
+          } else if (currentLine + 1 >= 6) {
+            setGameStatus("lost");
+            toast.error(failmessage, {
+              description: (
+                <span
+                  className="italic"
+                  dangerouslySetInnerHTML={{ __html: styledWord }}
+                />
+              ),
+              className:
+                "!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md",
+              duration: 8000,
+              icon: false,
+            });
+            updatestats(userId!, false);
+            stats.updateGameStat();
+          } else {
+            setGameStatus("playing");
+          }
+        }, 1500);
       }
     } else if (key === "Backspace") {
       setCurrentGuess(currentGuess.slice(0, -1));
@@ -60,8 +102,6 @@ export const OnScreenKeyboard = () => {
     if (absent.includes(key)) return "absent";
     return "unused";
   };
-
-
 
   return (
     <div className="flex flex-col items-center gap-2 w-full max-w-lg mx-auto mt-8 px-2 ">

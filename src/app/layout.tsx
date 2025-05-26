@@ -36,18 +36,7 @@ export default function RootLayout({
           expand={false}
           richColors
           closeButton
-          theme="light"
-          toastOptions={{
-            unstyled: false,
-            classNames: {
-              toast:
-                "!bg-white !text-black !border !border-gray-200 !shadow-lg",
-              title: "!font-medium",
-              description: "!text-sm !opacity-90",
-              actionButton: "!bg-gray-100 hover:!bg-gray-200",
-              closeButton: "!text-gray-500 hover:!text-gray-700",
-            },
-          }}
+         
         />
       </body>
     </html>

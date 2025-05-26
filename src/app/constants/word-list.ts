@@ -417,6 +417,19 @@ const wordList = [
   "acute",
   "amend",
   "bacon",
+  "spasm",
+  "wreck",
+  "shack",
+  "globe",
+  "donut",
+  "donor",
+  "feint",
+  "decor",
+  "dodge",
+  "gloat",
+  "fable",
+  "fever",
+  "snack",
 ];
 
 /**
@@ -426,7 +439,7 @@ const wordList = [
  *
  * @returns {string} Today's word
  */
- 
+
 export function getTodaysWord() {
   // Get a consistent seed based on today's date
   const today = new Date();
@@ -449,3 +462,76 @@ export function getTodaysWord() {
 
   return wordList[index];
 }
+
+const WinMessages = {
+  0: [
+    " Did you cheat?! First try genius!🤯",
+    " Psychic confirmed. First guess!🔮",
+    " Bullseye! Right out of the gate! 🎯",
+    " You must be a wizard!🪄",
+    "How did you *know*?!🤨",
+  ],
+  1: [
+    "Smokin' hot guess!🔥",
+    "Big brain energy!",
+    "Second try? You're built different ⚡",
+    "Zooming through that word! 🚀 ",
+    "Too cool to guess wrong 😎",
+  ],
+  2: [
+    "Bronze medalist in word magic!🥉",
+    "👀 You’re really getting the hang of this!",
+    "🎩 Pulling answers out of thin air?",
+    "🤖 Are you secretly an AI?",
+    "📚 Dictionary vibes, huh?",
+  ],
+  3: [
+    "A little shaky 😅, but you made it!",
+    "Detective mode: activated!🔍",
+    "🪄 Luck + skill combo!",
+    "🧩 Puzzle solved like a pro!",
+    "🎲 That guess was risky... but it worked!",
+  ],
+  4: [
+    "Phew 😮‍💨, that was close!",
+    "🧯 That was almost a disaster!",
+    "Performance under pressure! 📉 ",
+    "Hey, a win's a win! 🎉 ",
+    "🎭 Drama until the end!",
+    "",
+  ],
+  5: [
+    "You were one guess away from doom!🥶",
+    "That was too close!😮‍💨",
+    "🐢 Slow and steady wins... barely.",
+    "💀 Thought you’d lost, didn’t you?",
+    "you guessed it right! 🎉",
+  ],
+};
+
+export const getToast = (currentLine: number) => {
+  const options = WinMessages[currentLine as keyof typeof WinMessages];
+  const randomIndex = Math.floor(Math.random() * options.length);
+  return options[randomIndex];
+};
+
+export const getFailMessage = () => {
+  const failMessages = [
+    `So close...😵‍💫 yet so far`,
+    `The word beat you this time. Come back stronger!`,
+    `Oof 🫠 that one slipped through.`,
+    `Tragic ending!. New day, new game!`,
+    `Got ya 🤪". You'll get it next time!`,
+    `It happens 🫥 . Don’t give up!`,
+    `That one was brutal 🥶. New day, new chance!`,
+    `What a ride 🎢... and a crash. Let's roll again tomorrow!`,
+    `That’s a wrap. You’ll crack it next time!`,
+    `Slow and steady 🐌 didn’t win today.`,
+    `Ouch. Today’s stats took a hit 📉 . Tomorrow’s a new chart!`,
+  ];
+
+  const randomIndex = Math.floor(Math.random() * failMessages.length);
+  return failMessages[randomIndex];
+};
+
+export const endingMessage ="You have completed today's challenge come back tomorrow";
