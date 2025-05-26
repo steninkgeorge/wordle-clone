@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { getStats } from "@/lib/fetch-data";
+import { create } from 'zustand';
+import { getStats } from '@/lib/fetch-data';
 
 interface GameStats {
   userId: string | undefined;
@@ -33,11 +33,11 @@ export const useGameStats = create<GameStats>((set) => ({
 
     try {
       if (!state.userId) {
-        throw new Error("User ID is not set");
+        throw new Error('User ID is not set');
       }
       const stats = await getStats(state.userId);
       if (!stats) {
-        throw new Error("No stats found for user");
+        throw new Error('No stats found for user');
       }
 
       set({
@@ -45,10 +45,10 @@ export const useGameStats = create<GameStats>((set) => ({
         GamesWon: stats.gamesWon,
         MaxStreak: stats.maxStreak,
         CurrentStreak: stats.currentStreak,
-        WinRatio: Math.floor((stats.gamesWon / stats.gamesPlayed) * 100),
+        WinRatio: Math.floor((stats.gamesWon / stats.gamesPlayed) * 100) || 0,
       });
     } catch (error) {
-      throw new Error("Error fetching game stats: " + error);
+      throw new Error('Error fetching game stats: ' + error);
     }
   },
 }));
