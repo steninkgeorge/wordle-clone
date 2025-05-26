@@ -1,17 +1,24 @@
+'use client';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { MedalIcon } from "lucide-react";
-import { useState } from "react";
-import { useGameStats } from "../hooks/gameStats";
+} from '@/components/ui/dialog';
+import { MedalIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useGameStats } from '../hooks/gameStats';
 
 export const StatsCard = () => {
-    const [open , setOpen ]=useState(false)
-    const stat=useGameStats()
+  const [open, setOpen] = useState(false);
+  const stat = useGameStats();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -19,11 +26,17 @@ export const StatsCard = () => {
           <MedalIcon className="w-8 h-8 cursor-pointer" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px bg-white dark:bg-neutral-900 border-none">
+      <DialogContent
+        className={`sm:max-w-[425px  border-none  ${
+          isDark
+            ? 'dark:bg-neutral-900 text-neutral-300'
+            : ' bg-white text-neutral-500'
+        }`}
+      >
         <DialogHeader>
           <DialogTitle>STATS</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col my-10 gap-y-8 text-neutral-300 text-lg ">
+        <div className="flex flex-col my-10 gap-y-8 text-lg ">
           <div className="flex justify-between px-20 ">
             <span>
               Games Played <span className="ml-1">🎮</span>
@@ -38,7 +51,7 @@ export const StatsCard = () => {
           </div>
           <div className="flex justify-between px-20 ">
             <span>
-              {" "}
+              {' '}
               Streak <span className="ml-1">🔥</span>
             </span>
             <span>{stat.CurrentStreak}</span>
