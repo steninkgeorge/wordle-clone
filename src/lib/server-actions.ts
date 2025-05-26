@@ -1,4 +1,4 @@
-"use server";
+'use server';
 import {
   createGuess,
   createStats,
@@ -6,8 +6,8 @@ import {
   updateGameStatus,
   updateGuess,
   updateStats,
-} from "@/lib/create-user";
-import prismadb from "../../lib/prismadb";
+} from '@/lib/supabase-actions';
+import prismadb from '../../lib/prismadb';
 
 export async function getUserStats(userId: string) {
   try {

@@ -1,8 +1,9 @@
 immediate : find and fix loopholes
 
-    TODO: Add stats and integrate auth. 
+    TODO: integrate auth. 
     TODO: Add gamification like virtual coins and streak
-
+    TODO: Guess rate in stats
+    
 Later TODO
 
     TODO: Add spelling bee and waffle. 

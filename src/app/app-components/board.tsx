@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   forwardRef,
@@ -7,22 +7,22 @@ import {
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
+} from 'react';
 import {
   endingMessage,
   getFailMessage,
   getToast,
   getTodaysWord,
-} from "../constants/word-list";
-import { Grid, GridRef } from "./grid";
-import { updatestats } from "@/lib/fetch-data";
-import { countFrequency, HintProps } from "@/lib/frequency-count";
-import { useGameState } from "../hooks/game-state";
-import { ShimmerGrid } from "./shimmer-grid";
-import { HowToPlay } from "./onboarding";
-import { useKeyboardState } from "../hooks/keyboard-state";
-import { toast } from "sonner";
-import { useGameStats } from "../hooks/gameStats";
+} from '../constants/word-list';
+import { Grid, GridRef } from './grid';
+import { updatestats } from '@/lib/server-actions';
+import { countFrequency, HintProps } from '@/lib/frequency-count';
+import { useGameState } from '../hooks/game-state';
+import { ShimmerGrid } from './shimmer-grid';
+import { HowToPlay } from './onboarding';
+import { useKeyboardState } from '../hooks/keyboard-state';
+import { toast } from 'sonner';
+import { useGameStats } from '../hooks/gameStats';
 
 export interface BoardRef {
   scrollToHint: () => void;
@@ -51,7 +51,7 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   } = useGameState();
 
   const stats = useGameStats();
-  const [word, setWord] = useState("");
+  const [word, setWord] = useState('');
   const [frequencyMap, setFrequencyMap] = useState(new Map<string, number>());
 
   const [Hint, SetHint] = useState<HintProps>({
@@ -63,15 +63,15 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
 
   const handleEnter = useCallback(
     async (guess: string) => {
-      if (gameStatus !== "playing" && gameStatus !== "paused") return;
-      console.log("handle enter");
+      if (gameStatus !== 'playing' && gameStatus !== 'paused') return;
+      console.log('handle enter');
       makeGuess(guess);
       updateKeyState(guess, word);
       const message = getToast(currentLine);
       const failmessage = getFailMessage();
       setTimeout(() => {
         if (guess === word) {
-          setGameStatus("won");
+          setGameStatus('won');
 
           toast.success(`You've guessed it right!🎉`, {
             description: (
@@ -79,7 +79,7 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
                 <span className="bg-gradient-to-r from-green-500 to-cyan-600 bg-clip-text text-transparent font-medium text-[14px] italic">
                   {message.replace(
                     /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu,
-                    ""
+                    ''
                   )}
                 </span>
                 <span>
@@ -87,17 +87,17 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
                     .match(
                       /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
                     )
-                    ?.join(" ")}
+                    ?.join(' ')}
                 </span>
               </span>
             ),
-            className: "!text-green-800 !bg-green-50",
+            className: '!text-green-800 !bg-green-50',
             duration: 8000,
           });
           updatestats(userId!, true);
           stats.updateGameStat();
         } else if (currentLine + 1 >= 6) {
-          setGameStatus("lost");
+          setGameStatus('lost');
           toast.error(failmessage, {
             description: (
               <span
@@ -106,14 +106,14 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
               />
             ),
             className:
-              "!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md",
+              '!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md',
             duration: 8000,
             icon: false,
           });
           updatestats(userId!, false);
           stats.updateGameStat();
         } else {
-          setGameStatus("playing");
+          setGameStatus('playing');
         }
       }, 1500);
     },
@@ -121,17 +121,17 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   );
 
   useEffect(() => {
-    if (gameStatus === "won" || gameStatus === "lost") {
+    if (gameStatus === 'won' || gameStatus === 'lost') {
       toast.success(``, {
         description: (
           <span>
             <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent font-medium text-[14px]">
               {endingMessage}
-            </span>{" "}
+            </span>{' '}
             😇
           </span>
         ),
-        className: "!text-green-800 !bg-green-50",
+        className: '!text-green-800 !bg-green-50',
       });
 
       return;
@@ -153,18 +153,18 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   }, [isInitialized]);
 
   useEffect(() => {
-    if (gameStatus !== "playing" && gameStatus !== "paused") return;
+    if (gameStatus !== 'playing' && gameStatus !== 'paused') return;
 
     const handleType = (event: KeyboardEvent) => {
       switch (event.key) {
-        case "Enter":
+        case 'Enter':
           if (currentGuess.length === 5) {
             handleEnter(currentGuess);
-            setGameStatus("paused");
+            setGameStatus('paused');
           }
           break;
 
-        case "Backspace":
+        case 'Backspace':
           setCurrentGuess(currentGuess.slice(0, -1));
           break;
 
@@ -172,17 +172,17 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
           if (
             currentGuess.length < 5 &&
             /^[a-zA-Z]$/.test(event.key) &&
-            gameStatus === "playing"
+            gameStatus === 'playing'
           ) {
             setCurrentGuess(currentGuess + event.key);
           }
           break;
       }
     };
-    window.addEventListener("keydown", handleType);
+    window.addEventListener('keydown', handleType);
 
     return () => {
-      window.removeEventListener("keydown", handleType);
+      window.removeEventListener('keydown', handleType);
     };
   }, [currentGuess, gameStatus, currentLine]);
 
@@ -205,4 +205,4 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   );
 });
 
-Board.displayName = "Board";
+Board.displayName = 'Board';

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getStats } from '@/lib/fetch-data';
+import { getStats } from '@/lib/server-actions';
 
 interface GameStats {
   userId: string | undefined;

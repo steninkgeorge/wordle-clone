@@ -5,9 +5,9 @@ import {
   postStats,
   updateguess,
   updateStatus,
-} from "@/lib/fetch-data";
-import { create } from "zustand";
-import { useGameStats } from "./gameStats";
+} from '@/lib/server-actions';
+import { create } from 'zustand';
+import { useGameStats } from './gameStats';
 //maybe create an error state as well
 
 interface GameState {
@@ -16,12 +16,12 @@ interface GameState {
   guesses: string[];
   currentLine: number;
   currentGuess: string;
-  gameStatus: "playing" | "won" | "lost" | "paused";
+  gameStatus: 'playing' | 'won' | 'lost' | 'paused';
   increaseCurrentLine: () => void;
   setCurrentGuess: (guess: string) => void;
   makeGuess: (guess: string) => Promise<void>;
   setGameStatus: (
-    status: "playing" | "won" | "lost" | "paused"
+    status: 'playing' | 'won' | 'lost' | 'paused'
   ) => Promise<void>;
   initializeUser: () => Promise<void>;
   loadGameState: () => Promise<void>;
@@ -31,10 +31,10 @@ interface GameState {
 export const useGameState = create<GameState>((set, get) => ({
   userId: null,
   isInitialized: false,
-  guesses: Array(6).fill(""),
+  guesses: Array(6).fill(''),
   currentLine: 0,
-  currentGuess: "",
-  gameStatus: "playing",
+  currentGuess: '',
+  gameStatus: 'playing',
   setUserId: (userId) => set({ userId }),
   increaseCurrentLine: () => {
     const state = get();
@@ -48,7 +48,7 @@ export const useGameState = create<GameState>((set, get) => ({
     set({
       guesses: newGuesses,
       currentLine: state.currentLine + 1,
-      currentGuess: "",
+      currentGuess: '',
     });
 
     //update the db
@@ -58,13 +58,13 @@ export const useGameState = create<GameState>((set, get) => ({
     const state = get();
     set({ gameStatus: status });
 
-    if (status === "lost" || status === "won") {
+    if (status === 'lost' || status === 'won') {
       updateStatus(state.userId!, status);
     }
   },
   initializeUser: async () => {
     try {
-      const user = localStorage.getItem("user");
+      const user = localStorage.getItem('user');
       const gameStats = useGameStats.getState();
 
       if (user) {
@@ -77,7 +77,7 @@ export const useGameState = create<GameState>((set, get) => ({
       }
       const newUser = await CreateUser();
       if (newUser) {
-        localStorage.setItem("user", JSON.stringify(newUser.id));
+        localStorage.setItem('user', JSON.stringify(newUser.id));
         postGuess(newUser.id);
         postStats(newUser.id);
         set({ userId: newUser.id });
