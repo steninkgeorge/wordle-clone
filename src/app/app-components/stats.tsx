@@ -64,7 +64,9 @@ export const StatsCard = () => {
             <span>
               Win Ratio <span className="ml-1">✅</span>
             </span>
-            <span>{stat.WinRatio} %</span>
+            <span>
+              {stat.WinRatio} {stat.WinRatio > 0 && '%'}
+            </span>
           </div>
         </div>
       </DialogContent>
