@@ -50,7 +50,7 @@ export const StatsCard = () => {
           <div className="flex justify-between  ">
             <span>
               {' '}
-              Streak <span className="ml-1">🔥</span>
+              Win Streak <span className="ml-1">🔥</span>
             </span>
             <span>{stat.CurrentStreak}</span>
           </div>

@@ -85,7 +85,7 @@ export const updateStats = async (userId: string, wonGame: boolean) => {
       data: {
         gamesPlayed: { increment: 1 }, // Always increment by 1
         gamesWon: wonGame ? { increment: 1 } : undefined, // Conditional increment
-        currentStreak: { increment: 1 },
+        currentStreak: wonGame ? { increment: 1 } : { set: 0 },
 
         maxStreak: shouldUpdateMaxStreak
           ? { set: updatedCurrentStreak }
