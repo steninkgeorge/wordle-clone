@@ -1,21 +1,24 @@
-"use client";
+'use client';
 
-import {  useEffect } from "react";
-import { useGameState, useOnboardingState } from "./hooks/game-state";
+import { useEffect } from 'react';
+import { useGameState, useOnboardingState } from './hooks/game-state';
+import { useTheme } from './hooks/theme';
 
 export const UserInitializationComponent = () => {
-
-  const {isInitialized, initializeUser } = useGameState();
-  const {setOpen}=useOnboardingState()
+  const { isInitialized, initializeUser } = useGameState();
+  const { setOpen } = useOnboardingState();
+  const initTheme = useTheme((state) => state.initTheme);
 
   useEffect(() => {
-    const data = localStorage.getItem("hasPlayed")
-   if(data){
-      setOpen(false)
-   }
+    initTheme();
 
-    if(!isInitialized){
-      initializeUser()
+    const data = localStorage.getItem('hasPlayed');
+    if (data) {
+      setOpen(false);
+    }
+
+    if (!isInitialized) {
+      initializeUser();
     }
   }, [initializeUser, isInitialized]);
 

@@ -8,24 +8,18 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { useOnboardingState } from '../hooks/game-state';
-import { useEffect } from 'react';
+import { useTheme } from '../hooks/theme';
 
 export const HowToPlay = () => {
   const { open, setOpen } = useOnboardingState();
 
-  const isDark = document.documentElement.classList.contains('dark');
+  const { theme } = useTheme();
 
-  useEffect(() => {
-    const hasPlayed = localStorage.getItem('hasPlayed');
-    if (!hasPlayed) {
-      localStorage.setItem('hasPlayed', '1');
-    }
-  }, []);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className={`border-none sm:max-w-[425px] ${
-          isDark
+          theme === 'dark'
             ? 'shadow-[0_0_15px_0_rgba(110,231,183,0.5)] dark:bg-neutral-900'
             : 'shadow-[0_0_15px_0_rgba(59,130,246,0.5)] bg-white'
         }`}
