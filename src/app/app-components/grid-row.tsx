@@ -1,4 +1,3 @@
-
 export function Line({
   guessItem,
   word,
@@ -10,12 +9,11 @@ export function Line({
   word: string;
   frequencyMap: Map<string, number>;
 }) {
-
   const tile = [];
   const localMap = new Map<string, number>(frequencyMap);
-  let state = "absent";
+  let state = 'absent';
 
-  let animate: undefined | "flip";
+  let animate: undefined | 'flip';
   for (let i = 0; i < 5; i++) {
     const char = guessItem[i];
 
@@ -27,7 +25,7 @@ export function Line({
 
     if (char && isSubmitted) {
       if (localMap.has(char) && word[i] === char) {
-        state = "correct";
+        state = 'correct';
 
         const current = localMap.get(char) || 0;
         if (current <= 1) {
@@ -36,7 +34,7 @@ export function Line({
           localMap.set(char, current - 1);
         }
       } else if (localMap.has(char)) {
-        state = "present";
+        state = 'present';
 
         const current = localMap.get(char) || 0;
         if (current <= 1) {
@@ -45,18 +43,17 @@ export function Line({
           localMap.set(char, current - 1);
         }
       } else {
-        state = "incorrect";
-
+        state = 'incorrect';
       }
 
-      animate = "flip";
+      animate = 'flip';
     }
 
     tile.push(
       <div
         key={i}
-        className={`tile ${isEmpty ? "empty" : ""} ${state} ${animate} ${
-          animate ? `flip-${i}` : ""
+        className={`tile rounded-sm ${isEmpty ? 'empty' : ''} ${state} ${animate} ${
+          animate ? `flip-${i}` : ''
         }`}
       >
         {char}
@@ -64,5 +61,5 @@ export function Line({
     );
   }
 
-  return <div className="line">{tile}</div>;
+  return <div className="line ">{tile}</div>;
 }

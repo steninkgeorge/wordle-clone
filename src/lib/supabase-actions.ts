@@ -1,5 +1,5 @@
 import prismadb from '../../lib/prismadb';
-import { GameStatus } from '@prisma/client';
+import { GameStatus, InventoryType, TransactionType } from '@prisma/client';
 
 export const createUser = async () => {
   try {
@@ -115,5 +115,95 @@ export const updateGameStatus = async (userId: string, status: string) => {
     });
   } catch (error) {
     throw Error('error ' + error);
+  }
+};
+
+export const getInventoryItems = async (userId: string) => {
+  try {
+    const res = await prismadb.inventory.findMany({
+      where: { userId: userId },
+      select: { type: true, quantity: true },
+    });
+    return res;
+  } catch (error) {
+    throw Error('error ' + error);
+  }
+};
+
+export const getShopItems = async () => {
+  try {
+    const items = await prismadb.shop.findMany({
+      select: {
+        name: true,
+        description: true,
+        inventoryType: true,
+        price: true,
+      },
+    });
+    return {
+      success: true,
+      items: items,
+      message: 'items fetched successfully',
+    };
+  } catch (error) {
+    return { success: false, items: [], message: 'error' + error };
+  }
+};
+
+export const BuyItemFromShop = async (
+  userId: string,
+  itemType: InventoryType,
+  amount: number
+) => {
+  try {
+    const item = await prismadb.inventory.findUnique({
+      where: { userId_type: { userId, type: itemType } },
+      select: { quantity: true },
+    });
+    if (item && item.quantity >= 5) {
+      return {
+        success: false,
+        message: 'You can only own 5 of these magical item',
+      };
+    }
+    if (item) {
+      await prismadb.inventory
+        .update({
+          where: { userId_type: { userId, type: itemType } },
+          data: { quantity: { increment: 1 }, lastPurchaseDate: new Date() },
+        })
+        .then(async () => {
+          await prismadb.transaction.update({
+            where: { userId: userId },
+            data: {
+              amount: { decrement: amount },
+              type: TransactionType.GUESSES_BONUS,
+            },
+          });
+        });
+    } else {
+      await prismadb.inventory
+        .create({
+          data: {
+            userId: userId,
+            type: itemType,
+            quantity: 1,
+            lastPurchaseDate: new Date(),
+          },
+        })
+        .then(async () => {
+          await prismadb.transaction.update({
+            where: { userId: userId },
+            data: {
+              amount: { decrement: amount },
+              type: TransactionType.GUESSES_BONUS,
+            },
+          });
+        });
+    }
+
+    return { success: true, message: 'Item added to inventory.' };
+  } catch (error) {
+    return { success: false, message: 'error' + error };
   }
 };

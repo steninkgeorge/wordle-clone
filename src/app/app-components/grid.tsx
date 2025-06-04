@@ -3,10 +3,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Line } from "./grid-row";
-import { OnScreenKeyboard } from "./keyboard";
-import { forwardRef, useImperativeHandle, useRef } from "react";
+} from '@/components/ui/accordion';
+import { Line } from './grid-row';
+import { OnScreenKeyboard } from './keyboard';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 interface HintProps {
   consonant: string | undefined;
@@ -32,8 +32,8 @@ export const Grid = forwardRef<GridRef, GridProps>(
     useImperativeHandle(ref, () => ({
       scrollToHint: () => {
         hintRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
+          behavior: 'smooth',
+          block: 'center',
         });
       },
     }));
@@ -42,15 +42,17 @@ export const Grid = forwardRef<GridRef, GridProps>(
       <div className="relative min-h-screen min-w-screen max-w-5xl mx-auto p-4  items-center ">
         <div className="flex md:flex-row flex-col items-center justify-center gap-10">
           <div className="board w-full max-w-md mx-auto md:mx-0 items-center">
-            {guesses.map((guess, index) => (
-              <Line
-                key={index}
-                guessItem={index === currentLine ? currentGuess : guess}
-                word={word}
-                isSubmitted={index < currentLine}
-                frequencyMap={frequencyMap}
-              />
-            ))}
+            <div className="board-container">
+              {guesses.map((guess, index) => (
+                <Line
+                  key={index}
+                  guessItem={index === currentLine ? currentGuess : guess}
+                  word={word}
+                  isSubmitted={index < currentLine}
+                  frequencyMap={frequencyMap}
+                />
+              ))}
+            </div>
             <OnScreenKeyboard />
           </div>
           <div
@@ -80,7 +82,7 @@ export const Grid = forwardRef<GridRef, GridProps>(
                 </AccordionTrigger>
                 <AccordionContent>
                   <p className="font-semibold text-lg item-cneter flex pl-10">
-                    {Hint.vowel ? Hint.vowel : "No vowel"}
+                    {Hint.vowel ? Hint.vowel : 'No vowel'}
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -92,4 +94,4 @@ export const Grid = forwardRef<GridRef, GridProps>(
   }
 );
 
-Grid.displayName = "Grid";
+Grid.displayName = 'Grid';

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   :root {
@@ -30,8 +30,6 @@
   }
 }
 
-
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -44,7 +42,9 @@ body {
            text-2xl font-bold border-2 uppercase select-none;
     border-color: rgb(89, 89, 89);
     transform: scale(1);
-    transition: transform 0.1s ease-in-out, border-color 0.3s ease;
+    transition:
+      transform 0.1s ease-in-out,
+      border-color 0.3s ease;
     transform-style: preserve-3d;
     perspective: 1000px;
   }
@@ -137,12 +137,27 @@ body {
   }
 
   .line {
-    @apply flex justify-center items-center gap-x-2;
+    @apply flex justify-center items-center gap-x-2 my-1.5;
   }
 
   .board {
     @apply flex flex-col gap-y-1 pt-10;
   }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.line.animate-in {
+  animation: appear 0.3s ease-out forwards;
 }
 
 @keyframes slideIn {
@@ -171,7 +186,7 @@ body {
   animation: slideIn 0.3s ease-out forwards;
 }
 
-[data-sonner-toast][data-closing="true"] {
+[data-sonner-toast][data-closing='true'] {
   animation: slideOut 0.3s ease-in forwards;
 }
 

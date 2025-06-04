@@ -1,14 +1,22 @@
 import { toast } from 'sonner';
 import {
+  DailyBonus,
   getFailMessage,
   getToast,
   getTodaysWord,
+  StreakBonus,
 } from '../constants/word-list';
 import { useGameState } from '../hooks/game-state';
 import { useKeyboardState } from '../hooks/keyboard-state';
 import { DeleteIcon } from 'lucide-react';
 import { updatestats } from '@/lib/server-actions';
 import { useGameStats } from '../hooks/gameStats';
+import {
+  showDailyRewardToast,
+  showStreakBonusToast,
+} from '@/lib/rewards-toast';
+import { updateTransactionData } from '@/lib/star-coins';
+import { useGameItems } from '../hooks/game-assets';
 
 const KEYBOARD_LAYOUT = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -21,6 +29,7 @@ export const OnScreenKeyboard = () => {
     currentGuess,
     setCurrentGuess,
     gameStatus,
+    guessLength,
     makeGuess,
     setGameStatus,
     currentLine,
@@ -32,6 +41,7 @@ export const OnScreenKeyboard = () => {
 
   const { correct, present, absent, updateKeyState } = useKeyboardState();
   const styledWord = `The word was "<span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-bold">${word.toUpperCase()}</span>`;
+  const { coins, setCoins } = useGameItems();
 
   const handleKeyClick = (key: string) => {
     if (gameStatus !== 'playing') return;
@@ -39,7 +49,6 @@ export const OnScreenKeyboard = () => {
     if (key === 'Enter') {
       if (currentGuess.length === 5) {
         makeGuess(currentGuess);
-        updateKeyState(currentGuess, word);
         const message = getToast(currentLine);
         const failmessage = getFailMessage();
         setTimeout(() => {
@@ -64,11 +73,21 @@ export const OnScreenKeyboard = () => {
                 </span>
               ),
               className: '!text-green-800 !bg-green-50',
-              duration: 8000,
+              duration: 3000,
             });
             updatestats(userId!, true);
             stats.updateGameStat();
-          } else if (currentLine + 1 >= 6) {
+            showDailyRewardToast();
+            showStreakBonusToast(stats.CurrentStreak);
+
+            //TODO: calculate the reward points and send an update
+            const newcoins =
+              (stats.CurrentStreak > 1 ? StreakBonus : 0) + DailyBonus; //daily rewards plus streak rewards
+
+            updateTransactionData(newcoins, userId!).then((value) =>
+              setCoins(value)
+            );
+          } else if (currentLine + 1 >= guessLength) {
             setGameStatus('lost');
             toast.error(failmessage, {
               description: (
@@ -79,14 +98,22 @@ export const OnScreenKeyboard = () => {
               ),
               className:
                 '!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md',
-              duration: 8000,
+              duration: 3000,
               icon: false,
             });
             updatestats(userId!, false);
             stats.updateGameStat();
+
+            showDailyRewardToast();
+
+            //TODO: calculate the reward points and send an update
+            updateTransactionData(coins + DailyBonus, userId!).then((value) =>
+              setCoins(value)
+            );
           } else {
             setGameStatus('playing');
           }
+          updateKeyState(currentGuess, word);
         }, 1500);
       }
     } else if (key === 'Backspace') {

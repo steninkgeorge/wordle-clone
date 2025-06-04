@@ -1,45 +1,40 @@
 'use client';
 
-import { HelpCircleIcon, LightbulbIcon, MoonIcon, SunIcon } from 'lucide-react';
-import { useState } from 'react';
-import { useOnboardingState } from '../hooks/game-state';
-import { StatsCard } from './stats';
+import { LightbulbIcon } from 'lucide-react';
 import { useTheme } from '../hooks/theme';
-
+import Image from 'next/image';
+import { useGameItems } from '../hooks/game-assets';
+import { Sidebar } from './sidebar';
 interface NavbarProps {
   scrollToHint?: () => void;
 }
 
 export const Navbar = ({ scrollToHint }: NavbarProps) => {
-  const { setOpen } = useOnboardingState();
-  const { theme, setTheme } = useTheme();
-  const [isDark, setDark] = useState(theme === 'dark');
-  const toggleTheme = () => {
-    const darkmode = !isDark;
-    setDark(darkmode);
-    localStorage.setItem('theme', darkmode ? 'dark' : 'light');
-    setTheme(darkmode ? 'dark' : 'light');
-  };
+  const { theme } = useTheme();
+  const { coins } = useGameItems();
+  const isDark = theme === 'dark';
 
   return (
-    <div className="flex justify-around items-center pt-6  border-neutral-300 dark:border-neutral-600 pb-4 shadow-md ">
-      <div className="flex gap-x-8">
-        <button onClick={toggleTheme} className="focus:outline-none">
-          {theme === 'light' ? (
-            <SunIcon className="w-8 h-8 cursor-pointer" />
-          ) : (
-            <MoonIcon className="w-8 h-8 cursor-pointer" />
-          )}
-        </button>
-        <HelpCircleIcon
-          onClick={() => setOpen(true)}
-          className="w-8 h-8 cursor-pointer "
-        />
+    <div className="flex justify-between items-center p-4 border-b dark:border-neutral-700">
+      <Sidebar />
+      {/* Coin Display */}
+      <div className="flex items-center gap-x-2">
         <LightbulbIcon
           onClick={scrollToHint}
           className="w-8 h-8 cursor-pointer md:hidden"
         />
-        <StatsCard />
+        <div
+          className={`flex items-center gap-x-1 px-2 py-1  text-sm font-bold  rounded-full ${isDark ? 'bg-neutral-700 text-neutral-200' : 'bg-neutral-200 text-neutral-600'}`}
+        >
+          <Image
+            src="/coin.png"
+            alt="coin"
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+          <span>{coins}</span>
+        </div>
       </div>
     </div>
   );

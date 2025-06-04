@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,53 +8,93 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
- enum GameStatus {
+model User {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  isGuest      Boolean       @default(true)
+  email        String?       @unique
+  username     String?       @unique
+  dailyGuesses DailyGuesses?
+  gameStats    GameStats?
+  transactions  Transaction[]
+  inventory Inventory[]
+}
+
+model GameStats {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  maxStreak      Int       @default(0)
+  currentStreak  Int       @default(0)
+  lastPlayedDate DateTime?
+  hasPlayedToday Boolean   @default(false)
+  gamesPlayed    Int       @default(0)
+  gamesWon       Int       @default(0)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DailyGuesses {
+  id           String     @id @default(uuid())
+  userId       String     @unique
+  date         DateTime   @default(now()) @db.Date
+  currentLine  Int        @default(0)
+  currentGuess String     @default("")
+  guesses      String[]   @default(["", "", "", "", "", ""])
+  gameStatus   GameStatus @default(playing)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+
+model Transaction {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  amount      Int        @default(0)
+  type        TransactionType
+  createdAt   DateTime   @default(now())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Inventory {
+  id  String  @id @default(uuid())
+  userId String 
+  type InventoryType
+  quantity Int @default(0)
+  lastPurchaseDate DateTime? // Track when last purchased
+  lastUsedDate DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, type])
+}
+
+
+model Shop {
+  id         String   @id @default(uuid())
+  name        String
+  description String?
+  price       Int
+  inventoryType InventoryType
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+enum TransactionType {
+  DAILY_LOGIN
+  PUZZLE_COMPLETE
+  GUESSES_BONUS
+  STREAK_BONUS
+  FIRST_TIME
+}
+
+enum GameStatus {
   playing
   won
   lost
   paused
 }
 
-model User {
-  id            String     @id @default(uuid())
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  isGuest       Boolean    @default(true)
-  email         String?    @unique
-  username      String?    @unique
-  
-  // Relations
-  gameStats     GameStats?
-  dailyGuesses  DailyGuesses?
+enum InventoryType {
+  EXTRA_GUESS
+  LETTER_REVEAL
 }
-
-model GameStats {
-  id            String    @id @default(uuid())
-  userId        String    @unique
-  maxStreak     Int       @default(0)
-  currentStreak Int       @default(0)
-  lastPlayedDate DateTime?
-  hasPlayedToday Boolean  @default(false)
-  gamesPlayed   Int       @default(0)
-  gamesWon      Int       @default(0)
-  
-  // Relation
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model DailyGuesses {
-  id            String    @id @default(uuid())
-  userId        String    @unique
-  date          DateTime  @default(now()) @db.Date
-  currentLine   Int       @default(0)
-  currentGuess  String   @default("")
-  guesses      String[]  @default(["", "", "", "", "", ""]) @db.Text
-  gameStatus   GameStatus @default(playing)
-  // Relation
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, date])
-}
-
-        
-

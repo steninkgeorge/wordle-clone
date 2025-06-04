@@ -9,10 +9,12 @@ import {
   useState,
 } from 'react';
 import {
+  DailyBonus,
   endingMessage,
   getFailMessage,
   getToast,
   getTodaysWord,
+  StreakBonus,
 } from '../constants/word-list';
 import { Grid, GridRef } from './grid';
 import { updatestats } from '@/lib/server-actions';
@@ -23,6 +25,12 @@ import { HowToPlay } from './onboarding';
 import { useKeyboardState } from '../hooks/keyboard-state';
 import { toast } from 'sonner';
 import { useGameStats } from '../hooks/gameStats';
+import {
+  showDailyRewardToast,
+  showStreakBonusToast,
+} from '@/lib/rewards-toast';
+import { updateTransactionData } from '@/lib/star-coins';
+import { useGameItems } from '../hooks/game-assets';
 
 export interface BoardRef {
   scrollToHint: () => void;
@@ -41,6 +49,7 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   const {
     userId,
     guesses,
+    guessLength,
     isInitialized,
     makeGuess,
     currentLine,
@@ -59,12 +68,13 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
     consonant: undefined,
   });
 
+  const { coins, setCoins } = useGameItems();
+
   const styledWord = `The word was "<span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-bold">${word.toUpperCase()}</span>`;
 
   const handleEnter = useCallback(
     async (guess: string) => {
       if (gameStatus !== 'playing' && gameStatus !== 'paused') return;
-      console.log('handle enter');
       makeGuess(guess);
       updateKeyState(guess, word);
       const message = getToast(currentLine);
@@ -73,7 +83,7 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
         if (guess === word) {
           setGameStatus('won');
 
-          toast.success(`You've guessed it right!🎉`, {
+          toast.success(`You've guessed it right! 🎉`, {
             description: (
               <span>
                 <span className="bg-gradient-to-r from-green-500 to-cyan-600 bg-clip-text text-transparent font-medium text-[14px] italic">
@@ -92,11 +102,22 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
               </span>
             ),
             className: '!text-green-800 !bg-green-50',
-            duration: 8000,
+            duration: 3000,
           });
           updatestats(userId!, true);
           stats.updateGameStat();
-        } else if (currentLine + 1 >= 6) {
+
+          showDailyRewardToast();
+          showStreakBonusToast(stats.CurrentStreak + 1);
+
+          //TODO: calculate the reward points and send an update
+          const newcoins =
+            (stats.CurrentStreak > 1 ? StreakBonus : 0) + DailyBonus; //daily rewards plus streak rewards
+
+          updateTransactionData(newcoins, userId!).then((value) =>
+            setCoins(value)
+          );
+        } else if (currentLine + 1 >= guessLength) {
           setGameStatus('lost');
           toast.error(failmessage, {
             description: (
@@ -107,11 +128,17 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
             ),
             className:
               '!bg-gradient-to-br !from-amber-50 !to-yellow-100 !text-gray-800 !border !border-amber-200 shadow-md',
-            duration: 8000,
+            duration: 3000,
             icon: false,
           });
           updatestats(userId!, false);
           stats.updateGameStat();
+          showDailyRewardToast();
+
+          //TODO: calculate the reward points and send an update
+          updateTransactionData(coins + DailyBonus, userId!).then((value) =>
+            setCoins(value)
+          );
         } else {
           setGameStatus('playing');
         }

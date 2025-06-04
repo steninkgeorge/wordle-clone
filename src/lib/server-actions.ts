@@ -1,13 +1,21 @@
+//TODO: make all server actions shown through toast
+
 'use server';
+
 import {
+  BuyItemFromShop,
   createGuess,
   createStats,
   createUser,
+  getInventoryItems,
+  getShopItems,
   updateGameStatus,
   updateGuess,
   updateStats,
 } from '@/lib/supabase-actions';
 import prismadb from '../../lib/prismadb';
+import { InventoryType } from '@prisma/client';
+import { AllowExtraGuess } from './magical-items-supabase-actions';
 
 export async function getUserStats(userId: string) {
   try {
@@ -71,4 +79,33 @@ export const updatestats = async (userId: string, wonGame: boolean) => {
 
 export const updateStatus = async (userId: string, status: string) => {
   await updateGameStatus(userId, status);
+};
+
+export const getInventoryItem = async (userId: string) => {
+  const res = await getInventoryItems(userId);
+  return res;
+};
+
+export const UseMagicalGuessItem = async (userId: string, quantity: number) => {
+  //check for quantity
+  if (quantity <= 0) {
+    return { success: false, message: 'Quantity must be greater than 0' };
+    //TODO: show toast
+  }
+  const res = await AllowExtraGuess(userId, quantity);
+  return res;
+};
+
+export const loadFromShop = async () => {
+  const res = await getShopItems();
+  return res;
+};
+
+export const buyItemFromShop = async (
+  userId: string,
+  itemType: InventoryType,
+  amount: number
+) => {
+  const res = await BuyItemFromShop(userId, itemType, amount);
+  return res;
 };

@@ -20,8 +20,9 @@ export const StatsCard = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="">
-          <MedalIcon className="w-8 h-8 cursor-pointer" />
+        <button className=" flex item-center justify-center gap-x-2">
+          <MedalIcon className="w-8 h-6 cursor-pointer" />
+          <span className="flex items-center font-medium">Stats</span>
         </button>
       </DialogTrigger>
       <DialogContent
