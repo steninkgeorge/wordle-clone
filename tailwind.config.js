@@ -1,12 +1,12 @@
 module.exports = {
-  darkMode: "class",
-  
+  darkMode: 'class',
+
   theme: {
     extend: {
       colors: {
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
       },
     },
