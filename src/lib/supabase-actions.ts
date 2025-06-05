@@ -207,3 +207,22 @@ export const BuyItemFromShop = async (
     return { success: false, message: 'error' + error };
   }
 };
+
+export const LimitedBuyItemFromShop = async (
+  userId: string,
+  itemType: InventoryType
+) => {
+  try {
+    await prismadb.inventory.create({
+      data: {
+        userId: userId,
+        type: itemType,
+        quantity: 1,
+        lastPurchaseDate: new Date(),
+      },
+    });
+    return { success: true, message: 'Item added to inventory.' };
+  } catch (error) {
+    return { success: false, message: 'error' + error };
+  }
+};

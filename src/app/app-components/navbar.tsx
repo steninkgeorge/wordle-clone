@@ -15,7 +15,9 @@ export const Navbar = ({ scrollToHint }: NavbarProps) => {
   const isDark = theme === 'dark';
 
   return (
-    <div className="flex justify-between items-center p-4 border-b dark:border-neutral-700">
+    <div
+      className={`fixed top-0 left-0 right-0 z-50 md:px-[30%] ${isDark ? 'bg-neutral-900' : 'bg-white'} shadow-sm dark:border-neutral-700 flex justify-between items-center p-4`}
+    >
       <Sidebar />
       {/* Coin Display */}
       <div className="flex items-center gap-x-2">

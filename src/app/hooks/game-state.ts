@@ -2,6 +2,7 @@ import {
   CreateUser,
   getGameData,
   getInventoryItem,
+  limitedbuyItemFromShop,
   postGuess,
   postStats,
   updateguess,
@@ -110,9 +111,14 @@ export const useGameState = create<GameState>((set, get) => ({
         initTransaction(newUser.id, FirstTimeReward).then(() => {
           useGameItems.getState().setCoins(FirstTimeReward);
           showRewardToast();
-          setTimeout(() => {
-            showMagicItemToast('Magical Feather');
-          }, 5000);
+          limitedbuyItemFromShop(newUser.id, 'EXTRA_GUESS').then((res) => {
+            if (res.success) {
+              useInventory.getState().loadItems();
+              setTimeout(() => {
+                showMagicItemToast('Magical Feather');
+              }, 3000);
+            }
+          });
         });
         set({ userId: newUser.id });
         gameStats.setUserId(newUser.id);

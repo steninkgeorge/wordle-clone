@@ -88,7 +88,7 @@ export const showMagicItemToast = (itemName: string) => {
     description: (
       <div className="flex items-center gap-x-2">
         <span className="text-md font-semibold text-purple-900">
-          You received a Magical Item
+          Magical Item added to Inventory
         </span>
         <MagicIcon
           src={`/${itemName}.png`}
@@ -98,13 +98,14 @@ export const showMagicItemToast = (itemName: string) => {
         />
       </div>
     ),
-    duration: 4000,
+    duration: 3000,
     className:
       '!bg-gradient-to-br !from-fuchsia-100 !via-pink-200 !to-violet-300 !text-purple-900 !border !border-pink-200 !shadow-lg',
     style: {
       borderRadius: '12px',
       padding: '14px 16px',
     },
+
     closeButton: false,
   });
 };

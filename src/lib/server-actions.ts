@@ -9,6 +9,7 @@ import {
   createUser,
   getInventoryItems,
   getShopItems,
+  LimitedBuyItemFromShop,
   updateGameStatus,
   updateGuess,
   updateStats,
@@ -102,5 +103,15 @@ export const buyItemFromShop = async (
   amount: number
 ) => {
   const res = await BuyItemFromShop(userId, itemType, amount);
+  return res;
+};
+
+//limited time
+
+export const limitedbuyItemFromShop = async (
+  userId: string,
+  itemType: InventoryType
+) => {
+  const res = await LimitedBuyItemFromShop(userId, itemType);
   return res;
 };

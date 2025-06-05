@@ -1,7 +1,7 @@
-'use client'
-import { useRef } from "react";
-import { Board } from "./app-components/board";
-import { Navbar } from "./app-components/navbar";
+'use client';
+import { useRef } from 'react';
+import { Board } from './app-components/board';
+import { Navbar } from './app-components/navbar';
 
 export default function Home() {
   const boardRef = useRef<{ scrollToHint: () => void }>(null);
@@ -14,7 +14,7 @@ export default function Home() {
       <div className="flex flex-col md:h-screen md:overflow-hidden min-h-screen">
         <Navbar scrollToHint={scrollToHint} />
 
-        <div className="flex flex-grow item-center justify-center p-2 ">
+        <div className="flex flex-grow item-center justify-center p-2  mt-8 md:overflow-y-auto">
           <Board ref={boardRef} />
         </div>
       </div>
