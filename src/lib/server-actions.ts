@@ -87,11 +87,6 @@ export const getInventoryItem = async (userId: string) => {
 };
 
 export const UseMagicalGuessItem = async (userId: string, quantity: number) => {
-  //check for quantity
-  if (quantity <= 0) {
-    return { success: false, message: 'Quantity must be greater than 0' };
-    //TODO: show toast
-  }
   const res = await AllowExtraGuess(userId, quantity);
   return res;
 };

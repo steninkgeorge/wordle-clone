@@ -22,6 +22,7 @@ const Inventory = () => {
   const { items, loadItems } = useInventory();
   const { setGuessLength } = useGameState();
   const { userId } = useGameState();
+  const { setGuesses } = useGameState();
   const isDark = theme === 'dark';
 
   const handleClick = (item: InventoryType, quantity: number) => {
@@ -32,23 +33,8 @@ const Inventory = () => {
           .then((res) => {
             if (res.success) {
               setGuessLength(7);
-              //add a new element to the DOM
-              const parent = document.querySelector('.board-container');
-              const tiles = Array.from({ length: 5 }, () => {
-                const tile = document.createElement('div');
-                tile.className = 'tile rounded-sm empty absent';
-                return tile;
-              });
+              setGuesses(res.guesses);
 
-              const newLine = document.createElement('div');
-              newLine.className = 'line';
-              newLine.append(...tiles);
-
-              parent!.appendChild(newLine);
-              // Trigger animation
-              setTimeout(() => {
-                newLine.classList.add('animate-in');
-              }, 10);
               toast.success(res.message);
               loadItems();
             } else if (res.message) {

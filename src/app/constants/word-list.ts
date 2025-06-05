@@ -541,6 +541,6 @@ export const getFailMessage = () => {
 export const endingMessage =
   "You have completed today's challenge come back tomorrow";
 
-export const FirstTimeReward = 5; //coins
+export const FirstTimeReward = 10; //coins
 export const StreakBonus = 5;
 export const DailyBonus = 5;

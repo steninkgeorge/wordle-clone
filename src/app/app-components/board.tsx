@@ -31,6 +31,7 @@ import {
 } from '@/lib/rewards-toast';
 import { updateTransactionData } from '@/lib/star-coins';
 import { useGameItems } from '../hooks/game-assets';
+import { WhatsNewDialog } from '../constants/whatsNew';
 
 export interface BoardRef {
   scrollToHint: () => void;
@@ -110,12 +111,11 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
           showDailyRewardToast();
           showStreakBonusToast(stats.CurrentStreak + 1);
 
-          //TODO: calculate the reward points and send an update
           const newcoins =
             (stats.CurrentStreak > 1 ? StreakBonus : 0) + DailyBonus; //daily rewards plus streak rewards
 
           updateTransactionData(newcoins, userId!).then((value) =>
-            setCoins(value)
+            setCoins(coins + value)
           );
         } else if (currentLine + 1 >= guessLength) {
           setGameStatus('lost');
@@ -136,8 +136,8 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
           showDailyRewardToast();
 
           //TODO: calculate the reward points and send an update
-          updateTransactionData(coins + DailyBonus, userId!).then((value) =>
-            setCoins(value)
+          updateTransactionData(DailyBonus, userId!).then((value) =>
+            setCoins(coins + value)
           );
         } else {
           setGameStatus('playing');
@@ -218,6 +218,7 @@ export const Board = forwardRef<BoardRef>((_, ref) => {
   }
   return (
     <div>
+      <WhatsNewDialog />
       <HowToPlay />
       <Grid
         ref={gridRef}

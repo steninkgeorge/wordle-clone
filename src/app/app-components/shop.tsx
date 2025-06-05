@@ -36,21 +36,18 @@ export const Shop = () => {
       return;
     }
     if (coins < amount) {
-      toast.error('Insufficient coins');
-      setOpen(false);
+      toast.error("You dont't enough coins to buy the magical item");
       return;
     }
-    await buyItemFromShop(userId, itemType, amount)
-      .then((res) => {
-        if (res.success) {
-          toast.success(res.message);
-          setCoins(coins - amount);
-          loadItems();
-        } else {
-          toast.error(res.message);
-        }
-      })
-      .finally(() => setOpen(false));
+    await buyItemFromShop(userId, itemType, amount).then((res) => {
+      if (res.success) {
+        toast.success(res.message);
+        setCoins(coins - amount);
+        loadItems();
+      } else {
+        toast.error(res.message);
+      }
+    });
   };
 
   return (

@@ -85,7 +85,7 @@ export const OnScreenKeyboard = () => {
               (stats.CurrentStreak > 1 ? StreakBonus : 0) + DailyBonus; //daily rewards plus streak rewards
 
             updateTransactionData(newcoins, userId!).then((value) =>
-              setCoins(value)
+              setCoins(coins + value)
             );
           } else if (currentLine + 1 >= guessLength) {
             setGameStatus('lost');
@@ -107,8 +107,8 @@ export const OnScreenKeyboard = () => {
             showDailyRewardToast();
 
             //TODO: calculate the reward points and send an update
-            updateTransactionData(coins + DailyBonus, userId!).then((value) =>
-              setCoins(value)
+            updateTransactionData(DailyBonus, userId!).then((value) =>
+              setCoins(coins + value)
             );
           } else {
             setGameStatus('playing');

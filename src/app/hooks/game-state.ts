@@ -13,6 +13,7 @@ import { getTransactionData, initTransaction } from '@/lib/star-coins';
 import { FirstTimeReward } from '../constants/word-list';
 import { useGameItems } from './game-assets';
 import { useInventory } from './inventory-state';
+import { showMagicItemToast, showRewardToast } from '@/lib/rewards-toast';
 //maybe create an error state as well
 
 interface GameState {
@@ -23,6 +24,7 @@ interface GameState {
   currentLine: number;
   currentGuess: string;
   gameStatus: 'playing' | 'won' | 'lost' | 'paused';
+  setGuesses: (guesses: string[]) => void;
   setGuessLength: (value: number) => void;
   increaseCurrentLine: () => void;
   setCurrentGuess: (guess: string) => void;
@@ -43,6 +45,10 @@ export const useGameState = create<GameState>((set, get) => ({
   currentLine: 0,
   currentGuess: '',
   gameStatus: 'playing',
+  setGuesses: (guesses) => {
+    console.log(guesses);
+    set({ guesses: guesses });
+  },
   setGuessLength: (value) => {
     set({ guessLength: value });
   },
@@ -95,9 +101,13 @@ export const useGameState = create<GameState>((set, get) => ({
         localStorage.setItem('user', JSON.stringify(newUser.id));
         postGuess(newUser.id);
         postStats(newUser.id);
-        initTransaction(newUser.id, FirstTimeReward).then(() =>
-          useGameItems().setCoins(FirstTimeReward)
-        );
+        initTransaction(newUser.id, FirstTimeReward).then(() => {
+          useGameItems.getState().setCoins(FirstTimeReward);
+          showRewardToast();
+          setTimeout(() => {
+            showMagicItemToast('Magical Feather');
+          }, 5000);
+        });
         set({ userId: newUser.id });
         gameStats.setUserId(newUser.id);
       }
@@ -135,10 +145,14 @@ export const useGameState = create<GameState>((set, get) => ({
 
 interface onboardingStateprops {
   open: boolean;
+  showChangeLogs: boolean;
   setOpen: (value: boolean) => void;
+  SetShowChangeLogs: (value: boolean) => void;
 }
 
 export const useOnboardingState = create<onboardingStateprops>((set) => ({
-  open: true,
+  open: false,
+  showChangeLogs: false,
   setOpen: (value) => set({ open: value }),
+  SetShowChangeLogs: (value) => set({ showChangeLogs: value }),
 }));

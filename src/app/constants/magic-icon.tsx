@@ -22,7 +22,13 @@ export const MagicIcon = ({
       }}
     >
       <div
-        className={`absolute inset-0 rounded-full ${bgClassname} opacity-70 blur-sm scale-110 -z-10`}
+        className={`absolute -z-10 w-full h-full rounded-full blur-2xl opacity-80 ${bgClassname}`}
+        style={{
+          background: bgClassname
+            ? undefined
+            : `radial-gradient(circle at center, rgba(255,255,150,0.9) 0%, rgba(255,255,150,0.4) 30%, transparent 60%)`,
+          transform: 'scale(0.85)',
+        }}
       />
       <Image
         src={src}

@@ -7,7 +7,7 @@ import { useShopItem } from './hooks/shop-item';
 
 export const UserInitializationComponent = () => {
   const { isInitialized, initializeUser } = useGameState();
-  const { setOpen } = useOnboardingState();
+  const { setOpen, SetShowChangeLogs } = useOnboardingState();
   const initTheme = useTheme((state) => state.initTheme);
 
   const { loadShopItems } = useShopItem();
@@ -15,8 +15,16 @@ export const UserInitializationComponent = () => {
     initTheme();
 
     const data = localStorage.getItem('hasPlayed');
-    if (data) {
-      setOpen(false);
+    const whatsNew = localStorage.getItem('whatsNew');
+
+    if (!data) {
+      setOpen(true);
+      localStorage.setItem('hasPlayed', 'true');
+    }
+
+    if (!whatsNew) {
+      localStorage.setItem('whatsNew', 'true');
+      SetShowChangeLogs(true);
     }
 
     if (!isInitialized) {

@@ -1,10 +1,15 @@
-immediate : find and fix loopholes
 
-    TODO: integrate auth. 
-    TODO: Add gamification like virtual coins and streak and quests
-    TODO: Guess rate in stats
+
+immediate
+
+add cards for showing whats new ? for current users and as a skippable card for new users
+10 coins card for new users 
+beautiful sonner toast for magical items
+streak animation with number increasing
+
 
 Later TODO
 
     TODO: Add spelling bee and waffle. 
-    TODO: make a bot that can solve the puzzle in less moves compared to others 
+    TODO: make a bot that can solve the puzzle in less moves compared to others
+    
