@@ -36,6 +36,7 @@ export const MagicIcon = ({
         width={size}
         height={size}
         className="object-contain relative z-10"
+        priority
       />
     </div>
   );

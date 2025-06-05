@@ -12,6 +12,7 @@ const dailyRewardToast = () => {
         width={24}
         height={24}
         className="h-6 w-6"
+        priority
       />
       <span>+5 Star Coins</span>
     </div>
@@ -40,6 +41,7 @@ export const showStreakBonusToast = (currentStreak: number, delay = 7000) => {
               width={24}
               height={24}
               className="h-6 w-6"
+              priority
             />
             <span>
               +{StreakBonus} Bonus Coins ({currentStreak} day streak)
@@ -63,6 +65,7 @@ export const showRewardToast = () => {
           width={28}
           height={28}
           className="h-7 w-7"
+          priority
         />
         <span className="text-md font-semibold text-yellow-800">
           You have recieved 10 star coins

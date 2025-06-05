@@ -32,6 +32,7 @@ export const Navbar = ({ scrollToHint }: NavbarProps) => {
             width={24}
             height={24}
             className="object-contain"
+            priority
           />
           <span>{coins}</span>
         </div>

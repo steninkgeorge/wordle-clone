@@ -99,6 +99,7 @@ export const Shop = () => {
                             width={24}
                             height={24}
                             className="object-contain"
+                            priority
                           />
                         </div>
                       </div>

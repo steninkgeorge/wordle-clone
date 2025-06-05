@@ -92,8 +92,14 @@ export const useGameState = create<GameState>((set, get) => ({
         const coins = await getTransactionData(parsedUser);
         useGameItems.getState().setCoins(coins);
         useGameStats.getState().updateGameStat();
-
         await get().loadGameState();
+        const oneTime = localStorage.getItem('oneTime');
+        if (!oneTime) {
+          setTimeout(() => {
+            showMagicItemToast('Magical Feather');
+          }, 5000);
+          localStorage.setItem('oneTime', 'true');
+        }
         return;
       }
       const newUser = await CreateUser();
