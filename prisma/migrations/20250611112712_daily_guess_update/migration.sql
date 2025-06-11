@@ -29,7 +29,7 @@ ALTER COLUMN "date" SET NOT NULL;
 
 -- AlterTable
 ALTER TABLE "GameStats" ADD COLUMN     "previousStreak" INTEGER NOT NULL DEFAULT 0,
-ALTER COLUMN "lastPlayedDate" SET DEFAULT NOW()
+ALTER COLUMN "lastPlayedDate" SET DEFAULT NOW(),
 ALTER COLUMN "lastPlayedDate" SET NOT NULL;
 
 -- AlterTable
