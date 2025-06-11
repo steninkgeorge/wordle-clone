@@ -26,7 +26,8 @@ model GameStats {
   userId         String    @unique
   maxStreak      Int       @default(0)
   currentStreak  Int       @default(0)
-  lastPlayedDate DateTime?
+  previousStreak Int       @default(0)
+  lastPlayedDate DateTime  @updatedAt
   hasPlayedToday Boolean   @default(false)
   gamesPlayed    Int       @default(0)
   gamesWon       Int       @default(0)
@@ -36,7 +37,7 @@ model GameStats {
 model DailyGuesses {
   id           String     @id @default(uuid())
   userId       String     @unique
-  date         DateTime   @default(now()) @db.Date
+  date         DateTime   @updatedAt
   currentLine  Int        @default(0)
   currentGuess String     @default("")
   guesses      String[]   @default(["", "", "", "", "", ""])
@@ -61,12 +62,11 @@ model Inventory {
   userId String 
   type InventoryType
   quantity Int @default(0)
-  lastPurchaseDate DateTime? // Track when last purchased
+  lastPurchaseDate DateTime  
   lastUsedDate DateTime?
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, type])
 }
-
 
 model Shop {
   id         String   @id @default(uuid())
@@ -83,6 +83,7 @@ enum TransactionType {
   DAILY_LOGIN
   PUZZLE_COMPLETE
   GUESSES_BONUS
+  SHOP_ITEM
   STREAK_BONUS
   FIRST_TIME
 }
@@ -97,4 +98,6 @@ enum GameStatus {
 enum InventoryType {
   EXTRA_GUESS
   LETTER_REVEAL
+  STREAK_SAVER
+  STREAK_GUARD
 }
