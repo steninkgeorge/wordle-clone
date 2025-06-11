@@ -24,7 +24,7 @@ DROP INDEX "DailyGuesses_userId_date_key";
 
 -- AlterTable
 ALTER TABLE "DailyGuesses" ALTER COLUMN "date" DROP DEFAULT,
-ALTER COLUMN "date" SET DATA TYPE TIMESTAMP(3);
+ALTER COLUMN "date" SET DATA TYPE TIMESTAMP(3) NOT NULL;
 
 -- AlterTable
 ALTER TABLE "GameStats" ADD COLUMN     "previousStreak" INTEGER NOT NULL DEFAULT 0,
