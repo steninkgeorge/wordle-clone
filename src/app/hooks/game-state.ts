@@ -5,7 +5,7 @@ import {
   limitedbuyItemFromShop,
   postGuess,
   postStats,
-  resetUserStats,
+  // resetUserStats,
   updateguess,
   updateStatus,
 } from '@/lib/server-actions';
@@ -17,7 +17,10 @@ import { useGameItems } from './game-assets';
 import { useInventory } from './inventory-state';
 import { showMagicItemToast, showRewardToast } from '@/lib/rewards-toast';
 import { toast } from 'sonner';
-import { isSameDay, isStreakBroken } from '../constants/isSameDay';
+import {
+  isSameDay,
+  //  isStreakBroken
+} from '../constants/isSameDay';
 //maybe create an error state as well
 
 interface GameState {
@@ -169,7 +172,7 @@ export const useGameState = create<GameState>((set, get) => ({
   },
   loadGameState: async () => {
     const { userId } = get();
-    const gameStats = useGameStats.getState();
+    // const gameStats = useGameStats.getState();
 
     if (!userId) return;
     try {
@@ -190,20 +193,20 @@ export const useGameState = create<GameState>((set, get) => ({
           if (guardian) {
             localStorage.removeItem('guardian');
           }
-          if (gameStats.lastPlayedDate) {
-            const IsStreakBroken = isStreakBroken(
-              gameStats.lastPlayedDate,
-              gameData.gameStatus
-            );
-            if (IsStreakBroken) {
-              resetUserStats(userId).then((res) => {
-                if (res.success) {
-                  toast.success(res.message, { duration: 3000 });
-                }
-                gameStats.updateGameStat();
-              });
-            }
-          }
+          // if (gameStats.lastPlayedDate) {
+          //   const IsStreakBroken = isStreakBroken(
+          //     gameStats.lastPlayedDate,
+          //     gameData.gameStatus
+          //   );
+          //   if (IsStreakBroken) {
+          //     resetUserStats(userId).then((res) => {
+          //       if (res.success) {
+          //         toast.success(res.message, { duration: 3000 });
+          //       }
+          //       gameStats.updateGameStat();
+          //     });
+          //   }
+          // }
         });
       } else {
         set({
