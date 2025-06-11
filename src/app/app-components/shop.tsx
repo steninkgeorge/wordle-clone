@@ -59,7 +59,7 @@ export const Shop = () => {
         </button>
       </DialogTrigger>
       <DialogContent
-        className={`sm:mx-20 border-none ${isDark ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-600'}`}
+        className={`sm:mx-20 border-none ${isDark ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-600'} overflow-y-auto`}
       >
         <DialogHeader>
           <DialogTitle className="justify-start flex">SHOP</DialogTitle>
@@ -106,7 +106,7 @@ export const Shop = () => {
 
                       <button
                         onClick={() => BuyItem(item.inventoryType, item.price)}
-                        className={`p-2 cursor-pointer text-sm rounded-xl font-semibold bg-gradient-to-r ${coins > item.price ? 'from-green-500 to-emerald-600' : 'bg-neutral-700 text-neutral-200'} hover:scale-105 transition text-white shadow-md`}
+                        className={`p-2 cursor-pointer text-sm rounded-xl font-semibold bg-gradient-to-r ${coins >= item.price ? 'from-green-500 to-emerald-600' : 'bg-neutral-700 text-neutral-200'} hover:scale-105 transition text-white shadow-md`}
                       >
                         Buy
                       </button>

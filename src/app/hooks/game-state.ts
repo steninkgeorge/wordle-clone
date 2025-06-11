@@ -5,6 +5,7 @@ import {
   limitedbuyItemFromShop,
   postGuess,
   postStats,
+  resetUserStats,
   updateguess,
   updateStatus,
 } from '@/lib/server-actions';
@@ -15,6 +16,8 @@ import { FirstTimeReward } from '../constants/word-list';
 import { useGameItems } from './game-assets';
 import { useInventory } from './inventory-state';
 import { showMagicItemToast, showRewardToast } from '@/lib/rewards-toast';
+import { toast } from 'sonner';
+import { isSameDay, isStreakBroken } from '../constants/isSameDay';
 //maybe create an error state as well
 
 interface GameState {
@@ -47,7 +50,6 @@ export const useGameState = create<GameState>((set, get) => ({
   currentGuess: '',
   gameStatus: 'playing',
   setGuesses: (guesses) => {
-    console.log(guesses);
     set({ guesses: guesses });
   },
   setGuessLength: (value) => {
@@ -87,14 +89,27 @@ export const useGameState = create<GameState>((set, get) => ({
 
       if (user) {
         const parsedUser = JSON.parse(user);
-
         set({ userId: parsedUser });
-        gameStats.setUserId(parsedUser);
+
+        //init coins
         const coins = await getTransactionData(parsedUser);
         useGameItems.getState().setCoins(coins);
-        useGameStats.getState().updateGameStat();
-        await get().loadGameState();
+
+        //stats
+        gameStats.setUserId(parsedUser);
+        await useGameStats
+          .getState()
+          .updateGameStat()
+          .then(async () => {
+            //final loading
+
+            await get().loadGameState();
+          });
+
+        //limited
         const oneTime = localStorage.getItem('oneTime');
+
+        //LIMITED
         if (!oneTime) {
           setTimeout(() => {
             showMagicItemToast('Magical Feather');
@@ -111,6 +126,8 @@ export const useGameState = create<GameState>((set, get) => ({
         initTransaction(newUser.id, FirstTimeReward).then(() => {
           useGameItems.getState().setCoins(FirstTimeReward);
           showRewardToast();
+
+          //LIMITED: one week limited buy item
           limitedbuyItemFromShop(newUser.id, 'EXTRA_GUESS').then((res) => {
             if (res.success) {
               useInventory.getState().loadItems();
@@ -131,11 +148,43 @@ export const useGameState = create<GameState>((set, get) => ({
   },
   loadGameState: async () => {
     const { userId } = get();
+    const gameStats = useGameStats.getState();
+
     if (!userId) return;
     try {
       const gameData = await getGameData(userId);
+      if (!gameData) {
+        toast.error(
+          'No game data found for the user. Please start a new game.'
+        );
+        return;
+      }
 
-      if (gameData) {
+      const isSameDate = isSameDay(gameData.date);
+
+      if (!isSameDate) {
+        // reset the guess
+        await updateguess(userId, Array(6).fill(''), 0).then(() => {
+          const guardian = localStorage.getItem('guardian');
+          if (guardian) {
+            localStorage.removeItem('guardian');
+          }
+          if (gameStats.lastPlayedDate) {
+            const IsStreakBroken = isStreakBroken(
+              gameStats.lastPlayedDate,
+              gameData.gameStatus
+            );
+            if (IsStreakBroken) {
+              resetUserStats(userId).then((res) => {
+                if (res.success) {
+                  toast.success(res.message, { duration: 3000 });
+                }
+                gameStats.updateGameStat();
+              });
+            }
+          }
+        });
+      } else {
         set({
           guesses: gameData.guesses,
           guessLength: gameData.guesses.length,
@@ -144,7 +193,7 @@ export const useGameState = create<GameState>((set, get) => ({
           gameStatus: gameData.gameStatus,
         });
       }
-
+      // loading inventory items
       const item = await getInventoryItem(userId);
       if (item) {
         useInventory.getState().addItems(item);

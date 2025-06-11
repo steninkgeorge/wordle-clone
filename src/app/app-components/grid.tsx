@@ -40,7 +40,7 @@ export const Grid = forwardRef<GridRef, GridProps>(
 
     return (
       <div className="relative min-h-screen min-w-screen max-w-5xl mx-auto p-4  items-center ">
-        <div className="flex md:flex-row flex-col items-center justify-center gap-10">
+        <div className="flex lg:flex-row flex-col items-center justify-center gap-10">
           <div className="board w-full max-w-md mx-auto md:mx-0 items-center">
             <div className="board-container">
               {guesses.map((guess, index) => (
@@ -57,7 +57,7 @@ export const Grid = forwardRef<GridRef, GridProps>(
           </div>
           <div
             ref={hintRef}
-            className="md:flex  md:absolute  md:right-10 md:top-[30%] w-full md:max-w-72 border border-neutral-600 h-fit rounded-lg "
+            className="  flex lg:absolute  lg:right-10 lg:top-[30%] w-full lg:max-w-72 md:max-w-100 sm:max-w-100 border border-neutral-600 h-fit rounded-lg "
           >
             <Accordion type="multiple" className="w-full space-y-2">
               <AccordionItem

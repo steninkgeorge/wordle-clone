@@ -10,7 +10,7 @@ interface MagicIconProps {
 export const MagicIcon = ({
   src,
   alt,
-  bgClassname = 'bg-gradient-to-br from-blue-200 to-blue-500 dark:from-blue-800 dark:to-blue-600',
+  bgClassname = 'bg-purple-100 dark:bg-purple-900',
   size = 64,
 }: MagicIconProps) => {
   return (

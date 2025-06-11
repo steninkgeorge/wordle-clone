@@ -75,18 +75,27 @@ export const OnScreenKeyboard = () => {
               className: '!text-green-800 !bg-green-50',
               duration: 3000,
             });
-            updatestats(userId!, true);
-            stats.updateGameStat();
-            showDailyRewardToast();
-            showStreakBonusToast(stats.CurrentStreak);
+            updatestats(userId!, true)
+              .then(() => {
+                stats.updateGameStat().then(() => {
+                  const newcoins =
+                    (stats.CurrentStreak + 1 > 1 ? StreakBonus : 0) +
+                    DailyBonus; //daily rewards plus streak rewards
 
-            //TODO: calculate the reward points and send an update
-            const newcoins =
-              (stats.CurrentStreak > 1 ? StreakBonus : 0) + DailyBonus; //daily rewards plus streak rewards
-
-            updateTransactionData(newcoins, userId!).then((value) =>
-              setCoins(coins + value)
-            );
+                  updateTransactionData(newcoins, userId!).then((value) =>
+                    setCoins(coins + value)
+                  );
+                });
+              })
+              .finally(() => {
+                showDailyRewardToast();
+                showStreakBonusToast(stats.CurrentStreak);
+                //cleanup
+                if (localStorage.getItem('guardian')) {
+                  localStorage.removeItem('guardian');
+                  stats.setShowGuardian(false);
+                }
+              });
           } else if (currentLine + 1 >= guessLength) {
             setGameStatus('lost');
             toast.error(failmessage, {
@@ -101,15 +110,23 @@ export const OnScreenKeyboard = () => {
               duration: 3000,
               icon: false,
             });
-            updatestats(userId!, false);
-            stats.updateGameStat();
-
-            showDailyRewardToast();
-
-            //TODO: calculate the reward points and send an update
-            updateTransactionData(DailyBonus, userId!).then((value) =>
-              setCoins(coins + value)
-            );
+            updatestats(userId!, false)
+              .then(() => {
+                stats.updateGameStat().then(() => {
+                  showDailyRewardToast();
+                  updateTransactionData(DailyBonus, userId!).then((value) =>
+                    setCoins(coins + value)
+                  );
+                });
+              })
+              .finally(() => {
+                showDailyRewardToast();
+                //cleanup
+                if (localStorage.getItem('guardian')) {
+                  localStorage.removeItem('guardian');
+                  stats.setShowGuardian(false);
+                }
+              });
           } else {
             setGameStatus('playing');
           }

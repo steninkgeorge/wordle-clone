@@ -8,6 +8,9 @@ interface GameStats {
   MaxStreak: number;
   CurrentStreak: number;
   WinRatio: number;
+  lastPlayedDate: Date | undefined;
+  showGuardian: boolean;
+  setShowGuardian: (showGuardian: boolean) => void;
   updateGameStat: () => Promise<void>;
   setUserId: (userId: string) => void;
   loading: boolean;
@@ -21,7 +24,12 @@ export const useGameStats = create<GameStats>((set) => ({
   MaxStreak: 0,
   CurrentStreak: 0,
   WinRatio: 0,
+  lastPlayedDate: undefined,
   loading: false,
+  showGuardian: false,
+  setShowGuardian: (showGuardian) => {
+    set({ showGuardian: showGuardian });
+  },
   setUserId: (userId) => {
     set({ userId: userId });
   },
@@ -46,6 +54,7 @@ export const useGameStats = create<GameStats>((set) => ({
         MaxStreak: stats.maxStreak,
         CurrentStreak: stats.currentStreak,
         WinRatio: Math.floor((stats.gamesWon / stats.gamesPlayed) * 100) || 0,
+        lastPlayedDate: stats.lastPlayedDate || undefined,
       });
     } catch (error) {
       throw new Error('Error fetching game stats: ' + error);

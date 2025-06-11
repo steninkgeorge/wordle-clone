@@ -440,7 +440,7 @@ const wordList = [
  * @returns {string} Today's word
  */
 
-export function getTodaysWord() {
+export function getTodaysWord(): string {
   // Get a consistent seed based on today's date
   const today = new Date();
   const seed =

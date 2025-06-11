@@ -10,20 +10,24 @@ import {
   getInventoryItems,
   getShopItems,
   LimitedBuyItemFromShop,
+  resetStats,
   updateGameStatus,
   updateGuess,
   updateStats,
 } from '@/lib/supabase-actions';
 import prismadb from '../../lib/prismadb';
 import { InventoryType } from '@prisma/client';
-import { AllowExtraGuess } from './magical-items-supabase-actions';
+import {
+  AllowExtraGuess,
+  StreakGuard,
+  StreakSaver,
+} from './magical-items-supabase-actions';
 
 export async function getUserStats(userId: string) {
   try {
     const stats = await prismadb.gameStats.findUnique({
       where: { userId: userId },
     });
-
     return stats;
   } catch (error) {
     throw new Error(`${error}`);
@@ -87,8 +91,20 @@ export const getInventoryItem = async (userId: string) => {
   return res;
 };
 
+/* magical item server action */
+
 export const UseMagicalGuessItem = async (userId: string, quantity: number) => {
   const res = await AllowExtraGuess(userId, quantity);
+  return res;
+};
+
+export const UseStreakSaver = async (userId: string) => {
+  const res = await StreakSaver(userId);
+  return res;
+};
+
+export const UseStreakGuard = async (userId: string, timezone: string) => {
+  const res = await StreakGuard(userId, timezone);
   return res;
 };
 
@@ -103,6 +119,11 @@ export const buyItemFromShop = async (
   amount: number
 ) => {
   const res = await BuyItemFromShop(userId, itemType, amount);
+  return res;
+};
+
+export const resetUserStats = async (userId: string) => {
+  const res = await resetStats(userId);
   return res;
 };
 

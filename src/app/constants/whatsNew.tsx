@@ -7,20 +7,43 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { useOnboardingState } from '../hooks/game-state';
 import { useTheme } from '../hooks/theme';
 import { MagicIcon } from './magic-icon';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ItemToDisplay } from './magic-items';
 import { CheckmarkIcon } from 'react-hot-toast';
 
-const pages = [
+const milestones = [
   {
-    title: 'Introducing Star Coins ⭐️',
+    title: 'Streak Guardian 🪽',
+    image: ItemToDisplay['STREAK_GUARD'].img,
+    bgClassname: ItemToDisplay['STREAK_GUARD'].bg,
+    bulletPoints: [
+      'Shield your streak from unexpected losses 💪',
+      'Life happens — we’ve got your back 🎯',
+      'Stay on fire, even when the game says you lost 🔥',
+    ],
+  },
+  {
+    title: 'Streak Saver 🛡️',
+    image: '/StreakSaver.png',
+    bgClassname:
+      'bg-gradient-to-br from-fuchsia-200 via-purple-300 to-indigo-300 dark:from-purple-800 dark:via-purple-900 dark:to-indigo-900',
+    bulletPoints: [
+      'Missed a day? Your streak is safe ⏳',
+      'Play when you can , we’ll keep the streak alive 💫',
+      'Your perfect record stays untouched, even on busy days',
+    ],
+  },
+  {
+    separator: true,
+    label: 'Previous Release',
+  },
+  {
+    title: 'Star Coins ⭐️',
     image: '/coin.png',
     bgClassname: 'bg-yellow-200',
-
     bulletPoints: [
       'Earned every time you play — win or lose 🎯',
       'Bonus coins for maintaining streaks 🔥',
@@ -29,110 +52,113 @@ const pages = [
   },
   {
     title: 'The Magical 7th Guess 🪄',
-    image: '/Magical Feather.png',
-    bgClassname:
-      'bg-gradient-to-br from-fuchsia-200 via-purple-300 to-indigo-300 dark:from-purple-800 dark:via-purple-900 dark:to-indigo-900',
+    image: ItemToDisplay['EXTRA_GUESS'].img,
+    bgClassname: ItemToDisplay['EXTRA_GUESS'].bg,
     bulletPoints: [
       'A Magical Feather that grants you an extra guess ✨',
       'Can be purchased using Star Coins ',
     ],
   },
-  {
-    title: '🎉 You’re All Set!',
-    lastPage: true,
-    bulletPoints: [
-      'Collect Star Coins and build your streak.',
-      'Use magical items to boost your odds.',
-      'Explore the shop for hidden wonders.',
-    ],
-  },
 ];
 
 export const WhatsNewDialog = () => {
-  const [page, setPage] = useState(0);
   const { showChangeLogs, SetShowChangeLogs } = useOnboardingState();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const handleSkip = () => setPage(pages.length - 1);
-  const handleNext = () => setPage((p) => Math.min(p + 1, pages.length - 1));
-  const handleBack = () => setPage((p) => Math.max(p - 1, 0));
-  const handleClose = () => {
-    setPage(0);
-    SetShowChangeLogs(false);
-  };
-
-  const current = pages[page];
 
   return (
     <Dialog open={showChangeLogs} onOpenChange={SetShowChangeLogs}>
       <DialogContent
-        className={`border-none sm:max-w-[425px] ${
+        className={`max-h-[80vh] overflow-y-auto border-none sm:max-w-xl backdrop-blur-xl ${
           isDark
-            ? 'dark:bg-neutral-900 text-neutral-300'
-            : ' bg-white text-neutral-500'
+            ? 'dark:bg-neutral-900/70 text-neutral-300'
+            : 'bg-white/70 text-neutral-700'
         }`}
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">
-            {current.title}
+          <DialogTitle className="text-3xl text-center font-bold mb-4">
+            {'What’s New?'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center space-y-6 pt-4">
-          {current.lastPage ? (
-            <div className="flex justify-center gap-10 pt-4 flex-wrap">
-              <MagicIcon
-                src="/coin.png"
-                alt="Star Coins"
-                bgClassname="bg-yellow-200"
-                size={80}
-              />
-              <MagicIcon
-                src="/Magical Feather.png"
-                alt="7th Guess"
-                bgClassname="bg-gradient-to-br from-fuchsia-200 via-purple-300 to-indigo-300 dark:from-purple-800 dark:via-purple-900 dark:to-indigo-900"
-                size={80}
-              />
-            </div>
-          ) : current.image ? (
-            <div className="flex flex-col items-center space-y-6 pt-4">
-              <MagicIcon
-                src={current.image}
-                alt={current.title}
-                bgClassname={current.bgClassname}
-                size={180}
-              />
-            </div>
-          ) : null}
+        <div className="flex flex-col space-y-6">
+          {milestones.map((milestone, index) => {
+            if (milestone.separator) {
+              return (
+                <div
+                  key={index}
+                  className="text-center text-lg font-bold text-muted-foreground"
+                >
+                  <Separator className="my-2" />
+                  {milestone.label}
+                  <Separator className="my-2" />
+                </div>
+              );
+            }
 
-          <ul className="space-y-2 text-left text-sm md:text-base  font-sans leading-relaxed">
-            {current.bulletPoints.map((point, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-lg">•</span>
-                <span>{point}</span>
-              </li>
-            ))}
-          </ul>
+            return (
+              <div
+                key={index}
+                className={`rounded-xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] ${
+                  isDark
+                    ? 'bg-neutral-800/50 border border-neutral-700/50'
+                    : 'bg-white/50 border border-neutral-200/50'
+                }`}
+              >
+                <div className="flex flex-col items-center space-y-4 text-center">
+                  {milestone.image && (
+                    <div className="relative">
+                      <MagicIcon
+                        src={milestone.image}
+                        alt={milestone.title}
+                        bgClassname={milestone.bgClassname}
+                        size={100}
+                      />
+                    </div>
+                  )}
+                  <h3
+                    className={`text-xl font-semibold ${
+                      isDark ? 'text-white' : 'text-neutral-800'
+                    }`}
+                  >
+                    {milestone.title}
+                  </h3>
+                  <ul className="space-y-2 text-left text-sm md:text-base px-4 font-sans max-w-md">
+                    {milestone.bulletPoints?.map((point, i) => (
+                      <li
+                        key={i}
+                        className={`flex items-start gap-2 italic ${
+                          isDark ? 'text-neutral-300' : 'text-neutral-600'
+                        }`}
+                      >
+                        <span
+                          className={`
+                            w-1 h-1 rounded-full mt-2 flex-shrink-0
+                            ${isDark ? 'bg-slate-400' : 'bg-slate-500'}
+                          `}
+                        />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        <Separator className="my-4" />
-
-        <div className="flex justify-between items-center gap-2">
-          <Button variant="ghost" onClick={handleBack} disabled={page === 0}>
-            <ArrowLeft />
+        <Separator className="my-6" />
+        <div className="flex justify-center">
+          <Button
+            onClick={() => SetShowChangeLogs(false)}
+            className={`shadow-lg font-semibold ${
+              isDark
+                ? 'bg-neutral-700 hover:bg-neutral-600 text-white'
+                : 'bg-neutral-800 hover:bg-neutral-700 text-white'
+            }`}
+          >
+            <CheckmarkIcon className="mr-2 h-4 w-4" /> Got it!
           </Button>
-          <Button disabled={page === 2} variant="link" onClick={handleSkip}>
-            Skip
-          </Button>
-          {page < pages.length - 1 ? (
-            <Button onClick={handleNext}>
-              <ArrowRight />
-            </Button>
-          ) : (
-            <Button onClick={handleClose}>
-              <CheckmarkIcon />
-            </Button>
-          )}
         </div>
       </DialogContent>
     </Dialog>

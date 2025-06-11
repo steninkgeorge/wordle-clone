@@ -1,11 +1,11 @@
+import { isSameDay } from '@/app/constants/isSameDay';
 import prismadb from '../../lib/prismadb';
+import { DateTime } from 'luxon';
 
-//TODO: remove the item from the inventory or reduce the quantity
 //TODO: also make a check that its not used twice, it can only be used once per day!
 
 export const AllowExtraGuess = async (userId: string, quantity: number) => {
   let success = false;
-  console.log('Allowing extra guess for user');
   try {
     // First get the current daily guesses to preserve existing data
     const dailyGuesses = await prismadb.dailyGuesses.findUnique({
@@ -48,18 +48,8 @@ export const AllowExtraGuess = async (userId: string, quantity: number) => {
     });
 
     if (inventoryItem && inventoryItem.lastUsedDate) {
-      const lastUsed = new Date(inventoryItem.lastUsedDate);
-      const now = new Date();
-
-      const offsetIST = 5.5 * 60 * 60 * 1000;
-      const lastUsedISTDate = new Date(lastUsed.getTime() + offsetIST);
-      const nowISTDate = new Date(now.getTime() + offsetIST);
-
-      const isSameDay =
-        lastUsedISTDate.getUTCFullYear() === nowISTDate.getUTCFullYear() &&
-        lastUsedISTDate.getUTCMonth() === nowISTDate.getUTCMonth() &&
-        lastUsedISTDate.getUTCDate() === nowISTDate.getUTCDate();
-      if (isSameDay) {
+      const IsSameDay = isSameDay(inventoryItem.lastUsedDate);
+      if (IsSameDay) {
         return {
           success: false,
           guesses: [],
@@ -100,8 +90,6 @@ export const AllowExtraGuess = async (userId: string, quantity: number) => {
           }),
     ]);
 
-    console.log('Extra guess allowed successfully');
-    console.log(updatedGuesses);
     success = true;
     return {
       success: success,
@@ -110,5 +98,150 @@ export const AllowExtraGuess = async (userId: string, quantity: number) => {
     };
   } catch (error) {
     return { success: false, guesses: [], message: `${error}` };
+  }
+};
+
+/*
+streak saver
+ - override the currentStreak value with the previous streak value from game stats.
+*/
+
+export const StreakSaver = async (userId: string) => {
+  try {
+    const gameStats = await prismadb.gameStats.findUnique({
+      where: { userId: userId },
+      select: {
+        previousStreak: true,
+      },
+    });
+
+    if (!gameStats) {
+      return { success: false, message: 'No game stats found for user.' };
+    }
+
+    const inventoryItem = await prismadb.inventory.findUnique({
+      where: {
+        userId_type: {
+          userId,
+          type: 'STREAK_SAVER',
+        },
+      },
+      select: {
+        quantity: true,
+      },
+    });
+
+    if (!inventoryItem) {
+      return {
+        success: false,
+        message: 'No streak saver item found in inventory.',
+      };
+    }
+
+    await prismadb.$transaction([
+      prismadb.gameStats.update({
+        where: { userId: userId },
+        data: {
+          currentStreak: gameStats.previousStreak,
+        },
+      }),
+      inventoryItem?.quantity === 1
+        ? prismadb.inventory.delete({
+            where: {
+              userId_type: {
+                userId,
+                type: 'STREAK_SAVER',
+              },
+            },
+          })
+        : prismadb.inventory.update({
+            where: {
+              userId_type: {
+                userId,
+                type: 'STREAK_SAVER',
+              },
+            },
+            data: {
+              quantity: {
+                decrement: 1,
+              },
+              lastUsedDate: new Date(),
+            },
+          }),
+    ]);
+
+    return { success: true, message: 'Your streak is restored' };
+  } catch (error) {
+    return { success: false, message: `${error}` };
+  }
+};
+
+/*
+Streak Guard
+
+  - guards the user's streak even if they lose the game
+  - can only be used once 
+*/
+
+export const StreakGuard = async (userId: string, timeZone: string) => {
+  try {
+    //check if the user has already used it for today
+    const inventoryItem = await prismadb.inventory.findUnique({
+      where: {
+        userId_type: {
+          userId,
+          type: 'STREAK_GUARD',
+        },
+      },
+      select: {
+        lastUsedDate: true,
+        quantity: true,
+      },
+    });
+
+    if (!inventoryItem || !inventoryItem.lastUsedDate) {
+      return {
+        success: false,
+        message: 'No streak guard item found in inventory.',
+      };
+    }
+
+    const dbDateLocal = DateTime.fromJSDate(inventoryItem.lastUsedDate, {
+      zone: 'utc',
+    }).setZone(timeZone);
+    const nowLocal = DateTime.now().setZone(timeZone);
+    const isSameDay =
+      dbDateLocal.year === nowLocal.year &&
+      dbDateLocal.month === nowLocal.month &&
+      dbDateLocal.day === nowLocal.day;
+
+    if (isSameDay) {
+      return {
+        success: false,
+        message: 'You have already used the streak guard for today.',
+      };
+    }
+
+    //deduct the quantity and update the time
+    await prismadb.$transaction([
+      prismadb.inventory.update({
+        where: {
+          userId_type: {
+            userId,
+            type: 'STREAK_GUARD',
+          },
+        },
+        data: {
+          quantity: {
+            decrement: 1,
+          },
+          lastUsedDate: new Date(),
+        },
+      }),
+    ]);
+
+    return { success: true, message: 'Your streak is guarded for today!' };
+  } catch (error) {
+    return { success: false, message: `${error}` };
   }
 };

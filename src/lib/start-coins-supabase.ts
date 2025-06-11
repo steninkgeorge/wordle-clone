@@ -36,7 +36,6 @@ export const updateTransaction = async (amount: number, userId: string) => {
         createdAt: new Date(),
       },
     });
-    console.log('updated coins', amount);
     return amount;
   } catch (error) {
     throw new Error(`${error}`);

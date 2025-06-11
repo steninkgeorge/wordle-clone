@@ -1,3 +1,4 @@
+import { isSameDay } from '@/app/constants/isSameDay';
 import prismadb from '../../lib/prismadb';
 import { GameStatus, InventoryType, TransactionType } from '@prisma/client';
 
@@ -58,9 +59,7 @@ export const updateGuess = async (
       data: {
         guesses: guesses, // Updates the entire guesses array
         currentLine: currentLine, // Updates the current line number
-      },
-      include: {
-        user: true, // Optional: includes the related user in the response
+        gameStatus: 'playing',
       },
     });
   } catch (error) {
@@ -70,12 +69,31 @@ export const updateGuess = async (
 
 export const updateStats = async (userId: string, wonGame: boolean) => {
   try {
+    let guard = false;
     const stats = await prismadb.gameStats.findUnique({
       where: { userId },
     });
 
+    const inventoryItem = await prismadb.inventory.findUnique({
+      where: {
+        userId_type: { userId, type: 'STREAK_GUARD' },
+      },
+      select: {
+        lastUsedDate: true,
+      },
+    });
+
+    const IsSameDay = isSameDay(inventoryItem?.lastUsedDate);
+    if (IsSameDay) {
+      guard = true;
+    }
+
     if (!stats) throw new Error('User stats not found');
-    const updatedCurrentStreak = wonGame ? stats.currentStreak + 1 : 0;
+    const updatedCurrentStreak = wonGame
+      ? stats.currentStreak + 1
+      : guard
+        ? stats.currentStreak
+        : 0;
     const shouldUpdateMaxStreak = updatedCurrentStreak > stats.maxStreak;
 
     await prismadb.gameStats.update({
@@ -85,17 +103,47 @@ export const updateStats = async (userId: string, wonGame: boolean) => {
       data: {
         gamesPlayed: { increment: 1 }, // Always increment by 1
         gamesWon: wonGame ? { increment: 1 } : undefined, // Conditional increment
-        currentStreak: wonGame ? { increment: 1 } : { set: 0 },
+        currentStreak: wonGame
+          ? { increment: 1 }
+          : guard
+            ? undefined
+            : { set: 0 },
 
         maxStreak: shouldUpdateMaxStreak
           ? { set: updatedCurrentStreak }
           : undefined,
-        lastPlayedDate: new Date(),
         hasPlayedToday: true,
+        previousStreak: { set: updatedCurrentStreak },
       },
     });
   } catch (error) {
     throw Error('error ' + error);
+  }
+};
+
+export const resetStats = async (userId: string) => {
+  try {
+    const stats = await prismadb.gameStats.findUnique({
+      where: { userId },
+    });
+
+    if (!stats) {
+      return { success: false, message: 'User stats not found' };
+    }
+
+    await prismadb.gameStats.update({
+      where: {
+        userId,
+      },
+      data: {
+        currentStreak: { set: 0 },
+      },
+    });
+
+    //TODO : add funny returning messages based on the time gap the user has took
+    return { success: true, message: 'Hey welcome back 🤩' };
+  } catch (error) {
+    return { success: false, message: 'error:' + error };
   }
 };
 
@@ -177,7 +225,7 @@ export const BuyItemFromShop = async (
             where: { userId: userId },
             data: {
               amount: { decrement: amount },
-              type: TransactionType.GUESSES_BONUS,
+              type: TransactionType.SHOP_ITEM,
             },
           });
         });
@@ -196,7 +244,7 @@ export const BuyItemFromShop = async (
             where: { userId: userId },
             data: {
               amount: { decrement: amount },
-              type: TransactionType.GUESSES_BONUS,
+              type: TransactionType.SHOP_ITEM,
             },
           });
         });
