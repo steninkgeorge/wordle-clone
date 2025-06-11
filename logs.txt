@@ -1,0 +1,59 @@
+
+[unreleased]
+
+Features: 
+    - 1. Streak Saver (09/06/2025)
+        - restores streak of the user if they have forgot to play
+    
+        Dependencies:
+            - updated GameStats schema with a new field named previousStreak
+            - run raw sql query to remove all inventory item that has lastpurchaseDate set as NULL
+
+    - 2. Streak Protection (10/06/2025)
+        - Protects streak if the player loses the game. 
+    
+    
+Issues: 
+    tests done : (0/2)
+    
+    (06/06/2025)
+    #1. cron jobs runs on IST and doesnt account for players from different timezones       
+
+        - #3 wrong dates were shown which led to unintentional reset of guess and stats
+
+    #2. Wrong coin updates once the game is finished 
+            
+Fixes: 
+
+    (06/06/2025)
+
+    #1:
+    - added guess reset for client side 
+    - two additional functions that checks the for last guess date and last played date
+    - updates the guess past midnight of user's local time
+    - reset streak of the user based on local time
+    - everything is done in client side 
+
+    #2:
+    - reformatted the function calls. nothing new added.
+
+    (08/06/2025)
+
+    #3:
+    - isSameDay function was reformatted 
+ 
+
+
+Dependencies:
+
+    (08/06/2025)
+
+    #3:
+    - Made changes to db schema : GameStatus and DailyGuesses (date changed to @updatedAt)        
+
+
+Previous Release: 
+
+    Features: 
+
+        - Star coins , daily rewards and magical items. 
