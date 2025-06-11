@@ -24,7 +24,6 @@ DROP INDEX "DailyGuesses_userId_date_key";
 
 -- AlterTable
 ALTER TABLE "DailyGuesses" 
-ALTER COLUMN "date" DROP DEFAULT,
 ALTER COLUMN "date" SET DATA TYPE TIMESTAMP(3),
 ALTER COLUMN "date" SET NOT NULL;
 
