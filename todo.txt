@@ -1,15 +1,72 @@
 
+TODO immediate:
 
-immediate
+Bug found in streak saver. Showed an error toast and then updated the streak. Should prevent users from updating more than once as well as if its zero. 
 
-add cards for showing whats new ? for current users and as a skippable card for new users
-10 coins card for new users 
-beautiful sonner toast for magical items
-streak animation with number increasing
+alignment of inventory items and make shop scroallable
+add winning streak on navbar
+make a card that describe all magical items currently available
+release the new version
+animate streak increase
 
+Features ✨ (06/06/2025)
 
-Later TODO
+    High:
+        - new magical item Golden Streak Lock and immediate streak saver
+        - make stats sharable
+        - add quests for more fun !
+        
 
-    TODO: Add spelling bee and waffle. 
-    TODO: make a bot that can solve the puzzle in less moves compared to others
+    Medium:
+        - inventory item use toast color enhancement
+        - Add small monetization (buy me coffee)
     
+    Low:
+        -
+
+    Long Vision:
+        - Add spelling bee and waffle. 
+        - Make a bot that can solve the puzzle in less moves compared to others
+
+
+BUGS 🐞: (6/06/2025) 
+
+    High:
+        - fix todays word bug , it uses date instead of time
+        
+
+    Medium:
+        - navbar becoming black and immediately updating to theme color
+
+    Low: 
+        - shop coins showing grey color instead of green even though item is purchasable
+        - keyboard state not updated once the game is over
+
+ 
+
+Checks before Next Release:
+
+-> needs to fix all current bugs 
+-> achieve one objective from feature requests 
+-> release whats new 
+-> run raw sql query to remove all inventory item that has lastpurchaseDate set as NULL
+-> fix the height of inventory items card
+
+
+
+things to keep in mind: 
+
+streak saver - lets you recover the streak if you missed playing a day
+
+- a field to record the previous streak. 
+- when a game is lost or won , then update both previous streak and current streak
+- run an sql query to make sure current streak and previous streak are same
+
+streak protection - saves your streak if you lose a game [immediate TODO]
+
+- protects the streak if the user loses a game
+
+
+
+
+
