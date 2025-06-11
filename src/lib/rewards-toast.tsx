@@ -2,6 +2,8 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import { StreakBonus } from '@/app/constants/word-list';
 import { MagicIcon } from '@/app/constants/magic-icon';
+import { InventoryType } from '@prisma/client';
+import { ItemToDisplay } from '@/app/constants/magic-items';
 
 const dailyRewardToast = () => {
   return (
@@ -83,7 +85,8 @@ export const showRewardToast = () => {
   });
 };
 
-export const showMagicItemToast = (itemName: string) => {
+export const showMagicItemToast = (itemType: InventoryType) => {
+  const config = ItemToDisplay[itemType];
   return toast.success('', {
     description: (
       <div className="flex items-center gap-x-2">
@@ -91,8 +94,8 @@ export const showMagicItemToast = (itemName: string) => {
           Magical Item added to Inventory
         </span>
         <MagicIcon
-          src={`/${itemName}.png`}
-          alt={itemName}
+          src={config.img}
+          alt={config.name}
           bgClassname={''}
           size={28}
         />

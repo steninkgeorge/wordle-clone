@@ -22,6 +22,13 @@ export const UserInitializationComponent = () => {
       localStorage.setItem('hasPlayed', 'true');
     }
 
+    if (whatsNew === 'true') {
+      setTimeout(() => {
+        SetShowChangeLogs(true);
+      }, 4000);
+      localStorage.setItem('whatsNew', 'false');
+    }
+
     if (!whatsNew) {
       localStorage.setItem('whatsNew', 'true');
       SetShowChangeLogs(true);

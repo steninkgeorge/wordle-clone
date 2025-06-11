@@ -111,12 +111,25 @@ export const StreakSaver = async (userId: string) => {
     const gameStats = await prismadb.gameStats.findUnique({
       where: { userId: userId },
       select: {
+        currentStreak: true,
         previousStreak: true,
       },
     });
 
     if (!gameStats) {
       return { success: false, message: 'No game stats found for user.' };
+    }
+
+    if (gameStats.previousStreak === 0) {
+      return { success: false, message: 'You had no streak to restore.' };
+    }
+
+    if (gameStats.currentStreak === gameStats.previousStreak) {
+      return {
+        success: false,
+        message:
+          'Your current streak is already the same as your previous streak',
+      };
     }
 
     const inventoryItem = await prismadb.inventory.findUnique({

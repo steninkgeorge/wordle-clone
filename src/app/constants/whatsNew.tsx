@@ -22,7 +22,7 @@ const milestones = [
     bulletPoints: [
       'Shield your streak from unexpected losses 💪',
       'Life happens — we’ve got your back 🎯',
-      'Stay on fire, even when the game says you lost 🔥',
+      'Protects your streak even if you lose the game ❤️‍🔥',
     ],
   },
   {
@@ -69,9 +69,9 @@ export const WhatsNewDialog = () => {
   return (
     <Dialog open={showChangeLogs} onOpenChange={SetShowChangeLogs}>
       <DialogContent
-        className={`max-h-[80vh] overflow-y-auto border-none sm:max-w-xl backdrop-blur-xl ${
+        className={` max-h-[80vh] overflow-y-auto border-none sm:max-w-xl backdrop-blur-xl ${
           isDark
-            ? 'dark:bg-neutral-900/70 text-neutral-300'
+            ? 'dark:bg-neutral-900 text-neutral-300'
             : 'bg-white/70 text-neutral-700'
         }`}
       >
@@ -101,7 +101,7 @@ export const WhatsNewDialog = () => {
                 key={index}
                 className={`rounded-xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] ${
                   isDark
-                    ? 'bg-neutral-800/50 border border-neutral-700/50'
+                    ? 'bg-neutral-950/50 border border-neutral-700/50'
                     : 'bg-white/50 border border-neutral-200/50'
                 }`}
               >

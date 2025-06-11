@@ -64,6 +64,7 @@ const Inventory = () => {
             toast.error(res.message);
           }
         });
+        break;
 
       case InventoryType.STREAK_GUARD:
         if (gameStatus !== 'playing') {
@@ -85,6 +86,8 @@ const Inventory = () => {
             toast.error(res.message);
           }
         });
+
+        break;
     }
   };
 
@@ -97,9 +100,9 @@ const Inventory = () => {
         </button>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-[425px] border-none"
+        className="sm:max-w-[425px] border-none shadow-lg"
         style={{
-          background: isDark ? '#171717' : '#ffffff',
+          background: isDark ? '#0a0a0a' : '#ffffff',
           color: isDark ? '#d4d4d4' : '#737373',
         }}
       >
@@ -107,7 +110,7 @@ const Inventory = () => {
           <DialogTitle className="justify-start flex">Inventory</DialogTitle>
         </DialogHeader>
         {items.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 px-2 py-4">
+          <div className=" grid  grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 px-2 py-4">
             {items
               .filter((item) => item.quantity > 0)
               .map((item, index) => {
@@ -115,9 +118,9 @@ const Inventory = () => {
                 return (
                   <div
                     key={index}
-                    className={` p-3 backdrop-blur-md hover:shadow-md transition ${
+                    className={`border-1 rounded-xl shadow-lg p-3 h-full backdrop-blur-md hover:shadow-md transition ${
                       isDark
-                        ? 'border-neutral-700 bg-neutral-900/50'
+                        ? 'border-neutral-800 bg-black/50'
                         : 'border-neutral-200 bg-white'
                     }`}
                   >

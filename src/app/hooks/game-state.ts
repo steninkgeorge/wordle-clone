@@ -108,14 +108,19 @@ export const useGameState = create<GameState>((set, get) => ({
 
         //limited
         const oneTime = localStorage.getItem('oneTime');
-
-        //LIMITED
-        if (!oneTime) {
+        if (oneTime === 'true') {
+          //show magic item toast for 2 items , streak saver and streak guard
           setTimeout(() => {
-            showMagicItemToast('Magical Feather');
-          }, 5000);
-          localStorage.setItem('oneTime', 'true');
+            showMagicItemToast('STREAK_SAVER');
+          }, 3000);
+
+          setTimeout(() => {
+            showMagicItemToast('STREAK_GUARD');
+          }, 4000);
+          localStorage.setItem('oneTime', 'false');
         }
+        //LIMITED
+
         return;
       }
       const newUser = await CreateUser();
@@ -132,8 +137,24 @@ export const useGameState = create<GameState>((set, get) => ({
             if (res.success) {
               useInventory.getState().loadItems();
               setTimeout(() => {
-                showMagicItemToast('Magical Feather');
+                showMagicItemToast('EXTRA_GUESS');
               }, 3000);
+            }
+          });
+          limitedbuyItemFromShop(newUser.id, 'STREAK_GUARD').then((res) => {
+            if (res.success) {
+              useInventory.getState().loadItems();
+              setTimeout(() => {
+                showMagicItemToast('STREAK_GUARD');
+              }, 4000);
+            }
+          });
+          limitedbuyItemFromShop(newUser.id, 'STREAK_SAVER').then((res) => {
+            if (res.success) {
+              useInventory.getState().loadItems();
+              setTimeout(() => {
+                showMagicItemToast('STREAK_SAVER');
+              }, 5000);
             }
           });
         });

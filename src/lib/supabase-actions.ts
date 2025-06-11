@@ -83,9 +83,11 @@ export const updateStats = async (userId: string, wonGame: boolean) => {
       },
     });
 
-    const IsSameDay = isSameDay(inventoryItem?.lastUsedDate);
-    if (IsSameDay) {
-      guard = true;
+    if (inventoryItem && inventoryItem.lastUsedDate) {
+      const IsSameDay = isSameDay(inventoryItem.lastUsedDate);
+      if (IsSameDay) {
+        guard = true;
+      }
     }
 
     if (!stats) throw new Error('User stats not found');
