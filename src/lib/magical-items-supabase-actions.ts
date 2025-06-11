@@ -212,27 +212,29 @@ export const StreakGuard = async (userId: string, timeZone: string) => {
       },
     });
 
-    if (!inventoryItem || !inventoryItem.lastUsedDate) {
+    if (!inventoryItem) {
       return {
         success: false,
         message: 'No streak guard item found in inventory.',
       };
     }
 
-    const dbDateLocal = DateTime.fromJSDate(inventoryItem.lastUsedDate, {
-      zone: 'utc',
-    }).setZone(timeZone);
-    const nowLocal = DateTime.now().setZone(timeZone);
-    const isSameDay =
-      dbDateLocal.year === nowLocal.year &&
-      dbDateLocal.month === nowLocal.month &&
-      dbDateLocal.day === nowLocal.day;
+    if (inventoryItem.lastUsedDate) {
+      const dbDateLocal = DateTime.fromJSDate(inventoryItem.lastUsedDate, {
+        zone: 'utc',
+      }).setZone(timeZone);
+      const nowLocal = DateTime.now().setZone(timeZone);
+      const isSameDay =
+        dbDateLocal.year === nowLocal.year &&
+        dbDateLocal.month === nowLocal.month &&
+        dbDateLocal.day === nowLocal.day;
 
-    if (isSameDay) {
-      return {
-        success: false,
-        message: 'You have already used the streak guard for today.',
-      };
+      if (isSameDay) {
+        return {
+          success: false,
+          message: 'You have already used the streak guard for today.',
+        };
+      }
     }
 
     //deduct the quantity and update the time
