@@ -62,7 +62,7 @@ model Inventory {
   userId String 
   type InventoryType
   quantity Int @default(0)
-  lastPurchaseDate DateTime  
+  lastPurchaseDate DateTime @default(now()) 
   lastUsedDate DateTime?
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, type])

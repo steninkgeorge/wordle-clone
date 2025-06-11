@@ -24,8 +24,12 @@ ALTER TABLE "DailyGuesses" ALTER COLUMN "date" DROP DEFAULT,
 ALTER COLUMN "date" SET DATA TYPE TIMESTAMP(3);
 
 -- AlterTable
-ALTER TABLE "GameStats" ADD COLUMN     "previousStreak" INTEGER NOT NULL DEFAULT 0,
+ALTER TABLE "GameStats" ADD COLUMN "previousStreak" INTEGER NOT NULL DEFAULT 0,
+ALTER COLUMN "lastPlayedDate" SET DEFAULT NOW(),
 ALTER COLUMN "lastPlayedDate" SET NOT NULL;
 
 -- AlterTable
-ALTER TABLE "Inventory" ALTER COLUMN "lastPurchaseDate" SET NOT NULL;
+ALTER TABLE "Inventory" 
+ALTER COLUMN "lastPurchaseDate" SET DEFAULT NOW(),
+ALTER COLUMN "lastPurchaseDate" SET NOT NULL;
+
