@@ -4,7 +4,7 @@ A simple clone of the popular Wordle game. Players have six attempts to guess a 
 
 ## Screenshots
 
-### Game
+### Gameplay
 <img width="1470" height="956" alt="Image" src="https://github.com/user-attachments/assets/6be34272-18de-48a1-a6b6-62fe24aceeca" />
 
 <img width="1470" height="956" alt="Image" src="https://github.com/user-attachments/assets/76225652-1d33-48f7-9884-1a23e3244cc3" />
